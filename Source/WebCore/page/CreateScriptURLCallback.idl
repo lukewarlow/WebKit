@@ -1,0 +1,3 @@
+[
+    RethrowException
+] callback CreateScriptURLCallback = USVString? (DOMString input, any... arguments);

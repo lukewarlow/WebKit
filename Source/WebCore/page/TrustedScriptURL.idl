@@ -1,0 +1,10 @@
+[
+    EnabledBySetting=TrustedTypesEnabled,
+    Exposed=(Window,Worker)
+]
+interface TrustedScriptURL {
+  stringifier;
+  DOMString toJSON();
+  static TrustedScriptURL fromLiteral(object templateStringsArray);
+};
+

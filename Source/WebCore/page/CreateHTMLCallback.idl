@@ -1,0 +1,3 @@
+[
+    RethrowException
+] callback CreateHTMLCallback = DOMString? (DOMString input, any... arguments);

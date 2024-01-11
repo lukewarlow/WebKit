@@ -1735,6 +1735,9 @@ $(PROJECT_DIR)/mathml/mathattrs.in
 $(PROJECT_DIR)/mathml/mathtags.in
 $(PROJECT_DIR)/page/BarProp.idl
 $(PROJECT_DIR)/page/Crypto.idl
+$(PROJECT_DIR)/page/CreateHTMLCallback.idl
+$(PROJECT_DIR)/page/CreateScriptCallback.idl
+$(PROJECT_DIR)/page/CreateScriptURLCallback.idl
 $(PROJECT_DIR)/page/DOMSelection.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOM.idl
 $(PROJECT_DIR)/page/DOMWindow+CSSOMView.idl
@@ -1818,6 +1821,12 @@ $(PROJECT_DIR)/page/Settings.yaml
 $(PROJECT_DIR)/page/ShadowRealmGlobalScope.idl
 $(PROJECT_DIR)/page/ShareData.idl
 $(PROJECT_DIR)/page/StructuredSerializeOptions.idl
+$(PROJECT_DIR)/page/TrustedHTML.idl
+$(PROJECT_DIR)/page/TrustedScript.idl
+$(PROJECT_DIR)/page/TrustedScriptURL.idl
+$(PROJECT_DIR)/page/TrustedTypePolicy.idl
+$(PROJECT_DIR)/page/TrustedTypePolicyFactory.idl
+$(PROJECT_DIR)/page/TrustedTypePolicyOptions.idl
 $(PROJECT_DIR)/page/UndoItem.idl
 $(PROJECT_DIR)/page/UndoManager.idl
 $(PROJECT_DIR)/page/UserMessageHandler.idl
@@ -1829,6 +1838,7 @@ $(PROJECT_DIR)/page/WindowEventHandlers.idl
 $(PROJECT_DIR)/page/WindowLocalStorage.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Crypto.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+Performance.idl
+$(PROJECT_DIR)/page/WindowOrWorkerGlobalScope+TrustedTypes.idl
 $(PROJECT_DIR)/page/WindowOrWorkerGlobalScope.idl
 $(PROJECT_DIR)/page/WindowPostMessageOptions.idl
 $(PROJECT_DIR)/page/WindowSessionStorage.idl

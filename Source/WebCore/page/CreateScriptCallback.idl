@@ -1,0 +1,3 @@
+[
+    RethrowException
+] callback CreateScriptCallback = DOMString? (DOMString input, any... arguments);

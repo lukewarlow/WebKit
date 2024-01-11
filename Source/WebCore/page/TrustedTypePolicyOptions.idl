@@ -1,0 +1,5 @@
+dictionary TrustedTypePolicyOptions {
+  CreateHTMLCallback? createHTML;
+  CreateScriptCallback? createScript;
+  CreateScriptURLCallback? createScriptURL;
+};

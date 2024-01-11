@@ -1405,6 +1405,9 @@ JS_BINDING_IDLS := \
     $(WebCore)/loader/CORPViolationReportBody.idl \
     $(WebCore)/loader/appcache/DOMApplicationCache.idl \
     $(WebCore)/page/BarProp.idl \
+    $(WebCore)/page/CreateHTMLCallback.idl \
+    $(WebCore)/page/CreateScriptCallback.idl \
+    $(WebCore)/page/CreateScriptURLCallback.idl \
     $(WebCore)/page/Crypto.idl \
     $(WebCore)/page/DOMSelection.idl \
     $(WebCore)/page/DOMWindow.idl \
@@ -1461,6 +1464,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/PerformanceResourceTiming.idl \
     $(WebCore)/page/PerformanceServerTiming.idl \
     $(WebCore)/page/PerformanceTiming.idl \
+    $(WebCore)/page/TrustedHTML.idl \
+    $(WebCore)/page/TrustedScript.idl \
+    $(WebCore)/page/TrustedScriptURL.idl \
+    $(WebCore)/page/TrustedTypePolicy.idl \
+    $(WebCore)/page/TrustedTypePolicyOptions.idl \
+    $(WebCore)/page/TrustedTypePolicyFactory.idl \
     $(WebCore)/page/RemoteDOMWindow.idl \
     $(WebCore)/page/ResizeObserver.idl \
     $(WebCore)/page/ResizeObserverBoxOptions.idl \
@@ -1489,6 +1498,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/WindowLocalStorage.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Crypto.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope+Performance.idl \
+    $(WebCore)/page/WindowOrWorkerGlobalScope+TrustedTypes.idl \
     $(WebCore)/page/WindowOrWorkerGlobalScope.idl \
     $(WebCore)/page/WindowPostMessageOptions.idl \
     $(WebCore)/page/WindowSessionStorage.idl \

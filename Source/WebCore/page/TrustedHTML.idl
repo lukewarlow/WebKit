@@ -1,0 +1,9 @@
+[
+    EnabledBySetting=TrustedTypesEnabled,
+    Exposed=(Window,Worker)
+]
+interface TrustedHTML {
+  stringifier;
+  DOMString toJSON();
+  static TrustedHTML fromLiteral(object templateStringsArray);
+};

@@ -1,0 +1,6 @@
+[
+    EnabledBySetting=TrustedTypesEnabled,
+    ImplementedBy=WindowOrWorkerGlobalScopeTrustedTypes
+] partial interface mixin WindowOrWorkerGlobalScope {
+    [CallWith=CurrentScriptExecutionContext, SameObject] readonly attribute TrustedTypePolicyFactory trustedTypes;
+};

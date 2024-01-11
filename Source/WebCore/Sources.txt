@@ -1995,6 +1995,11 @@ page/ShadowRealmGlobalScope.cpp
 page/ShareDataReader.cpp
 page/SpatialNavigation.cpp
 page/TextIndicator.cpp
+page/TrustedHTML.cpp
+page/TrustedScript.cpp
+page/TrustedScriptURL.cpp
+page/TrustedTypePolicy.cpp
+page/TrustedTypePolicyFactory.cpp
 page/UndoItem.cpp
 page/UndoManager.cpp
 page/UserContentController.cpp
@@ -2007,6 +2012,7 @@ page/WheelEventTestMonitor.cpp
 page/WindowFeatures.cpp
 page/WindowFocusAllowedIndicator.cpp
 page/WindowOrWorkerGlobalScope.cpp
+page/WindowOrWorkerGlobalScopeTrustedTypes.cpp
 page/WorkerNavigator.cpp
 page/csp/CSPViolationReportBody.cpp
 page/csp/ContentSecurityPolicy.cpp
@@ -3362,6 +3368,9 @@ JSCookieStoreDeleteOptions.cpp
 JSCookieStoreGetOptions.cpp
 JSCookieStoreManager.cpp
 JSCountQueuingStrategy.cpp
+JSCreateHTMLCallback.cpp
+JSCreateScriptCallback.cpp
+JSCreateScriptURLCallback.cpp
 JSCredentialCreationOptions.cpp
 JSCredentialMediationRequirement.cpp
 JSCredentialRequestOptions.cpp
@@ -4352,6 +4361,12 @@ JSTransferFunction.cpp
 JSTransformStream.cpp
 JSTransformStreamDefaultController.cpp
 JSTreeWalker.cpp
+JSTrustedHTML.cpp
+JSTrustedScript.cpp
+JSTrustedScriptURL.cpp
+JSTrustedTypePolicy.cpp
+JSTrustedTypePolicyFactory.cpp
+JSTrustedTypePolicyOptions.cpp
 JSCSSKeywordValue.cpp
 JSCSSStyleImageValue.cpp
 JSCSSColor.cpp

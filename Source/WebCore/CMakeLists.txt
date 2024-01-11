@@ -1332,6 +1332,9 @@ set(WebCore_NON_SVG_IDL_FILES
     mathml/MathMLMathElement.idl
 
     page/BarProp.idl
+    page/CreateHTMLCallback.idl
+    page/CreateScriptCallback.idl
+    page/CreateScriptURLCallback.idl
     page/Crypto.idl
     page/DOMSelection.idl
     page/DOMWindow.idl
@@ -1387,6 +1390,12 @@ set(WebCore_NON_SVG_IDL_FILES
     page/PerformanceResourceTiming.idl
     page/PerformanceServerTiming.idl
     page/PerformanceTiming.idl
+    page/TrustedHTML.idl
+    page/TrustedScript.idl
+    page/TrustedScriptURL.idl
+    page/TrustedTypePolicy.idl
+    page/TrustedTypePolicyFactory.idl
+    page/TrustedTypePolicyOptions.idl
     page/RemoteDOMWindow.idl
     page/ResizeObserver.idl
     page/ResizeObserverBoxOptions.idl
@@ -1412,6 +1421,7 @@ set(WebCore_NON_SVG_IDL_FILES
     page/WindowLocalStorage.idl
     page/WindowOrWorkerGlobalScope+Crypto.idl
     page/WindowOrWorkerGlobalScope+Performance.idl
+    page/WindowOrWorkerGlobalScope+TrustedTypes.idl
     page/WindowOrWorkerGlobalScope.idl
     page/WindowPostMessageOptions.idl
     page/WindowSessionStorage.idl
