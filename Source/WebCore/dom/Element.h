@@ -81,6 +81,9 @@ class SpaceSplitString;
 class StylePropertyMap;
 class StylePropertyMapReadOnly;
 class Text;
+class TrustedHTML;
+class TrustedScript;
+class TrustedScriptURL;
 class UniqueElementData;
 class ValidatedFormListedElement;
 class WebAnimation;
@@ -177,8 +180,14 @@ public:
     inline AtomString getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
 
     WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedHTML& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedScript& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedScriptURL& value);
     static ExceptionOr<QualifiedName> parseAttributeName(const AtomString& namespaceURI, const AtomString& qualifiedName);
     WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const AtomString& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedHTML& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedScript& value);
+    WEBCORE_EXPORT ExceptionOr<void> setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedScriptURL& value);
 
     ExceptionOr<bool> toggleAttribute(const AtomString& qualifiedName, std::optional<bool> force);
 

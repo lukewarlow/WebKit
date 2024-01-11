@@ -138,6 +138,9 @@
 #include "StyleTreeResolver.h"
 #include "TextIterator.h"
 #include "TouchAction.h"
+#include "TrustedHTML.h"
+#include "TrustedScript.h"
+#include "TrustedScriptURL.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "VoidCallback.h"
 #include "WebAnimation.h"
@@ -1980,6 +1983,51 @@ ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const A
     return { };
 }
 
+ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const TrustedHTML& value)
+{
+    if (!Document::isValidName(qualifiedName))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
+
+    synchronizeAttribute(qualifiedName);
+    auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
+    auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
+    AtomString trustedTypeAsString(value.toString());
+    setAttributeInternal(index, name, trustedTypeAsString, InSynchronizationOfLazyAttribute::No);
+
+    return { };
+}
+
+ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const TrustedScript& value)
+{
+    if (!Document::isValidName(qualifiedName))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
+
+    synchronizeAttribute(qualifiedName);
+    auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
+    auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
+    AtomString trustedTypeAsString(value.toString());
+    setAttributeInternal(index, name, trustedTypeAsString, InSynchronizationOfLazyAttribute::No);
+
+    return { };
+}
+
+ExceptionOr<void> Element::setAttribute(const AtomString& qualifiedName, const TrustedScriptURL& value)
+{
+    if (!Document::isValidName(qualifiedName))
+        return Exception { ExceptionCode::InvalidCharacterError, makeString("Invalid qualified name: '", qualifiedName, "'") };
+
+    synchronizeAttribute(qualifiedName);
+    auto caseAdjustedQualifiedName = shouldIgnoreAttributeCase(*this) ? qualifiedName.convertToASCIILowercase() : qualifiedName;
+    unsigned index = elementData() ? elementData()->findAttributeIndexByName(caseAdjustedQualifiedName, false) : ElementData::attributeNotFound;
+    auto name = index != ElementData::attributeNotFound ? attributeAt(index).name() : QualifiedName { nullAtom(), caseAdjustedQualifiedName, nullAtom() };
+    AtomString trustedTypeAsString(value.toString());
+    setAttributeInternal(index, name, trustedTypeAsString, InSynchronizationOfLazyAttribute::No);
+
+    return { };
+}
+
 void Element::setAttribute(const QualifiedName& name, const AtomString& value)
 {
     synchronizeAttribute(name);
@@ -3351,6 +3399,36 @@ ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const 
     if (result.hasException())
         return result.releaseException();
     setAttribute(result.releaseReturnValue(), value);
+    return { };
+}
+
+ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedHTML& value)
+{
+    auto result = parseAttributeName(namespaceURI, qualifiedName);
+    if (result.hasException())
+        return result.releaseException();
+    AtomString trustedTypeAsString(value.toString());
+    setAttribute(result.releaseReturnValue(), trustedTypeAsString);
+    return { };
+}
+
+ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedScript& value)
+{
+    auto result = parseAttributeName(namespaceURI, qualifiedName);
+    if (result.hasException())
+        return result.releaseException();
+    AtomString trustedTypeAsString(value.toString());
+    setAttribute(result.releaseReturnValue(), trustedTypeAsString);
+    return { };
+}
+
+ExceptionOr<void> Element::setAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, const TrustedScriptURL& value)
+{
+    auto result = parseAttributeName(namespaceURI, qualifiedName);
+    if (result.hasException())
+        return result.releaseException();
+    AtomString trustedTypeAsString(value.toString());
+    setAttribute(result.releaseReturnValue(), trustedTypeAsString);
     return { };
 }
 
