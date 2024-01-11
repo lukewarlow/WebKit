@@ -80,6 +80,12 @@ enum class ContentSecurityPolicyModeForExtension : uint8_t {
     ManifestV3
 };
 
+enum class AllowTrustedTypePolicyDetails : uint8_t {
+    Allowed,
+    DisallowedName,
+    DisallowedDuplicateName,
+};
+
 class ContentSecurityPolicy : public CanMakeThreadSafeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -150,6 +156,8 @@ public:
 
     bool allowRunningOrDisplayingInsecureContent(const URL&);
 
+    bool allowTrustedTypePolicy(const String&, bool, AllowTrustedTypePolicyDetails&);
+
     // The following functions are used by internal data structures to call back into this object when parsing, validating,
     // and applying a Content Security Policy.
     // FIXME: We should make the various directives serve only as state stores for the parsed policy and remove these functions.
@@ -157,6 +165,13 @@ public:
 
     // Used by ContentSecurityPolicyMediaListDirective
     void reportInvalidPluginTypes(const String&) const;
+
+    // Used by ContentSecurityPolicyTrustedTypesDirective
+    void reportInvalidTrustedTypesPolicy(const String&) const;
+    void reportInvalidTrustedTypesNoneKeyword() const;
+
+    void reportInvalidTrustedTypesSinkGroup(const String&) const;
+    void reportEmptyRequireTrustedTypesForDirective() const;
 
     // Used by ContentSecurityPolicySourceList
     void reportDirectiveAsSourceExpression(const String& directiveName, StringView sourceExpression) const;

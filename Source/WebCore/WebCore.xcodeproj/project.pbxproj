@@ -15797,6 +15797,8 @@
 		A3BF7EF4256C8D720044BC75 /* KHRParallelShaderCompile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KHRParallelShaderCompile.h; sourceTree = "<group>"; };
 		A3BF7EF5256C8D740044BC75 /* KHRParallelShaderCompile.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = KHRParallelShaderCompile.idl; sourceTree = "<group>"; };
 		A3D42A841F33BA3600A64B62 /* LayoutUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutUnit.cpp; sourceTree = "<group>"; };
+		A3E74F312B50675400C8376A /* ContentSecurityPolicyTrustedTypesDirective.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ContentSecurityPolicyTrustedTypesDirective.h; path = csp/ContentSecurityPolicyTrustedTypesDirective.h; sourceTree = "<group>"; };
+		A3E74F322B50675400C8376A /* ContentSecurityPolicyTrustedTypesDirective.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ContentSecurityPolicyTrustedTypesDirective.cpp; path = csp/ContentSecurityPolicyTrustedTypesDirective.cpp; sourceTree = "<group>"; };
 		A3F1F75C2B35B4F70086828D /* TrustedTypePolicyOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrustedTypePolicyOptions.idl; sourceTree = "<group>"; };
 		A3F1F75D2B35B5540086828D /* TrustedTypePolicyOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrustedTypePolicyOptions.h; sourceTree = "<group>"; };
 		A3FF9B702921E6DC004F7A00 /* SourcesLibWebRTC.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SourcesLibWebRTC.txt; sourceTree = "<group>"; };
@@ -34482,6 +34484,8 @@
 				CE799F961C6A46BC0097B518 /* ContentSecurityPolicySourceList.h */,
 				CE799FA91C6A50660097B518 /* ContentSecurityPolicySourceListDirective.cpp */,
 				CE799FAA1C6A50660097B518 /* ContentSecurityPolicySourceListDirective.h */,
+				A3E74F322B50675400C8376A /* ContentSecurityPolicyTrustedTypesDirective.cpp */,
+				A3E74F312B50675400C8376A /* ContentSecurityPolicyTrustedTypesDirective.h */,
 				7ABA250628AB0A38005D4F6D /* CSPViolationReportBody.cpp */,
 				7ABA250228AAF2D4005D4F6D /* CSPViolationReportBody.h */,
 				7ABA24FC28AAE143005D4F6D /* CSPViolationReportBody.idl */,

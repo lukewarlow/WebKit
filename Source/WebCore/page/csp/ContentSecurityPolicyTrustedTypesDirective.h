@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,44 +25,25 @@
 
 #pragma once
 
-#include <wtf/Forward.h>
+#include "ContentSecurityPolicyDirective.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-namespace ContentSecurityPolicyDirectiveNames {
+class ContentSecurityPolicyDirectiveList;
 
-extern ASCIILiteral baseURI;
-extern ASCIILiteral childSrc;
-extern ASCIILiteral connectSrc;
-extern ASCIILiteral defaultSrc;
-extern ASCIILiteral fontSrc;
-extern ASCIILiteral formAction;
-extern ASCIILiteral frameAncestors;
-extern ASCIILiteral frameSrc;
-extern ASCIILiteral imgSrc;
-#if ENABLE(APPLICATION_MANIFEST)
-extern ASCIILiteral manifestSrc;
-#endif
-extern ASCIILiteral mediaSrc;
-extern ASCIILiteral objectSrc;
-extern ASCIILiteral pluginTypes;
-extern ASCIILiteral prefetchSrc;
-extern ASCIILiteral reportURI;
-extern ASCIILiteral reportTo;
-extern ASCIILiteral requireTrustedTypesFor;
-extern ASCIILiteral sandbox;
-extern ASCIILiteral scriptSrc;
-extern ASCIILiteral scriptSrcElem;
-extern ASCIILiteral scriptSrcAttr;
-extern ASCIILiteral styleSrc;
-extern ASCIILiteral styleSrcAttr;
-extern ASCIILiteral styleSrcElem;
-extern ASCIILiteral trustedTypes;
-extern ASCIILiteral upgradeInsecureRequests;
-extern ASCIILiteral blockAllMixedContent;
-extern ASCIILiteral workerSrc;
+class ContentSecurityPolicyTrustedTypesDirective : public ContentSecurityPolicyDirective {
+public:
+    ContentSecurityPolicyTrustedTypesDirective(const ContentSecurityPolicyDirectiveList&, const String& name, const String& value);
 
-} // namespace ContentSecurityPolicyDirectiveNames
+    bool allows(const String& value, bool isDuplicate, AllowTrustedTypePolicyDetails& details) const;
+
+private:
+    void parse(const String&);
+
+    bool m_allowDuplicates = false;
+    bool m_allowAny = false;
+    HashSet<String> m_list;
+};
 
 } // namespace WebCore
-
