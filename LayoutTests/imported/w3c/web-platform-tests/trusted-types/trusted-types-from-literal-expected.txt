@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: Unrecognized Content-Security-Policy directive 'require-trusted-types-for'.
-
 
 PASS TrustedHTML.fromLiteral is supported
 FAIL TrustedHTML.fromLiteral: Basic string literal works. assert_equals: expected "abc" but got ""
