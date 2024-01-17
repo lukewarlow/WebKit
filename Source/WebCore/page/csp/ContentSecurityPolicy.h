@@ -150,6 +150,8 @@ public:
     bool allowObjectFromSource(const URL&, RedirectResponseReceived = RedirectResponseReceived::No, const URL& preRedirectURL = URL()) const;
     bool allowBaseURI(const URL&, bool overrideContentSecurityPolicy = false) const;
 
+    bool allowTrustedTypesPolicy(const String&, bool isDuplicate, AllowTrustedTypePolicyDetails&) const;
+
     void setOverrideAllowInlineStyle(bool);
 
     void gatherReportURIs(DOMStringList&) const;

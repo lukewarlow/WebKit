@@ -47,7 +47,7 @@ public:
     static Ref<TrustedTypePolicyFactory> create();
     ~TrustedTypePolicyFactory() = default;
 
-    Ref<TrustedTypePolicy> createPolicy(const String& policyName, const TrustedTypePolicyOptions&);
+    ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext& context, const String& policyName, const TrustedTypePolicyOptions&);
     bool isHTML(JSC::JSValue);
     bool isScript(JSC::JSValue);
     bool isScriptURL(JSC::JSValue);

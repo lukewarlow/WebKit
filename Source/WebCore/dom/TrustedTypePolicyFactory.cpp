@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TrustedTypePolicyFactory.h"
 
+#include "ContentSecurityPolicy.h"
 #include "JSDOMConvertObject.h"
 #include "JSTrustedHTML.h"
 #include "JSTrustedScript.h"
@@ -46,8 +47,29 @@ Ref<TrustedTypePolicyFactory> TrustedTypePolicyFactory::create()
     return adoptRef(*new TrustedTypePolicyFactory());
 }
 
-Ref<TrustedTypePolicy> TrustedTypePolicyFactory::createPolicy(const String& policyName, const TrustedTypePolicyOptions& options)
+ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(ScriptExecutionContext& context, const String& policyName, const TrustedTypePolicyOptions& options)
 {
+    auto* csp = context.contentSecurityPolicy();
+    ASSERT(csp);
+
+    AllowTrustedTypePolicyDetails details = { AllowTrustedTypePolicyDetails::Allowed };
+
+    auto policyAllowed = csp->allowTrustedTypesPolicy(policyName, m_createdPolicyNames.contains(policyName), details);
+
+    if (!policyAllowed) {
+        if (details == AllowTrustedTypePolicyDetails::DisallowedName) {
+            return Exception {
+                ExceptionCode::TypeError,
+                makeString("Failed to execute 'createPolicy': Policy with name '"_s, policyName, "' disallowed."_s)
+            };
+       }
+
+       return Exception {
+           ExceptionCode::TypeError,
+           makeString("Failed to execute 'createPolicy': Policy with name '"_s, policyName, "' already exists."_s)
+       };
+    }
+
     auto policy = TrustedTypePolicy::create(policyName, options);
     if (policyName == "default"_s)
         m_defaultPolicy = policy.ptr();
