@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
 #include "ScriptWrappable.h"
 #include "TrustedTypePolicy.h"
 #include <wtf/Forward.h>
@@ -39,10 +40,10 @@ class TrustedScript;
 struct TrustedTypePolicyOptions;
 class ScriptExecutionContext;
 
-class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory> {
+class TrustedTypePolicyFactory : public ScriptWrappable, public RefCounted<TrustedTypePolicyFactory>, public ContextDestructionObserver {
     WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicyFactory);
 public:
-    static Ref<TrustedTypePolicyFactory> create();
+    static Ref<TrustedTypePolicyFactory> create(ScriptExecutionContext&);
     ~TrustedTypePolicyFactory() = default;
 
     ExceptionOr<Ref<TrustedTypePolicy>> createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions&);
@@ -58,6 +59,8 @@ public:
     RefPtr<TrustedTypePolicy> defaultPolicy() const { return m_defaultPolicy; }
 
 private:
+    TrustedTypePolicyFactory(ScriptExecutionContext&);
+
     RefPtr<TrustedTypePolicy> m_defaultPolicy;
     ListHashSet<String> m_createdPolicyNames;
 };

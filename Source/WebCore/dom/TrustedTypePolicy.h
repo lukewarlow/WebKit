@@ -30,6 +30,7 @@
 #include "CreateScriptURLCallback.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include "TrustedTypePolicyOptions.h"
 #include <JavaScriptCore/Strong.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -39,7 +40,6 @@ namespace WebCore {
 class TrustedHTML;
 class TrustedScript;
 class TrustedScriptURL;
-struct TrustedTypePolicyOptions;
 
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
     WTF_MAKE_ISO_ALLOCATED(TrustedTypePolicy);
@@ -51,13 +51,13 @@ public:
     ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     const String name() const { return m_name; }
 
+    const TrustedTypePolicyOptions& options() const { return m_options; }
+
 private:
     TrustedTypePolicy(const String&, const TrustedTypePolicyOptions&);
 
     String m_name;
-    RefPtr<CreateHTMLCallback> m_createHTMLCallback;
-    RefPtr<CreateScriptCallback> m_createScriptCallback;
-    RefPtr<CreateScriptURLCallback> m_createScriptURLCallback;
+    TrustedTypePolicyOptions m_options;
 };
 
 } // namespace WebCore

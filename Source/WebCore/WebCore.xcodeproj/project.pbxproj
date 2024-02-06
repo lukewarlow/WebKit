@@ -15848,6 +15848,7 @@
 		A31C4E5016E02AC5002F7957 /* OESTextureHalfFloat.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = OESTextureHalfFloat.idl; sourceTree = "<group>"; };
 		A31C4E5116E02B08002F7957 /* JSOESTextureHalfFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOESTextureHalfFloat.cpp; sourceTree = "<group>"; };
 		A31C4E5316E02B40002F7957 /* JSOESTextureHalfFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureHalfFloat.h; sourceTree = "<group>"; };
+		A32E83232B7248DF0055FE75 /* JSTrustedTypePolicyCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrustedTypePolicyCustom.cpp; sourceTree = "<group>"; };
 		A33A511B2B31DC3300284449 /* TrustedHTML.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrustedHTML.idl; sourceTree = "<group>"; };
 		A33A511C2B31DE4700284449 /* TrustedScript.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrustedScript.idl; sourceTree = "<group>"; };
 		A33A511E2B31DE8700284449 /* TrustedScriptURL.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = TrustedScriptURL.idl; sourceTree = "<group>"; };
@@ -28512,6 +28513,7 @@
 				070334E8145A1F35008D8D45 /* JSTrackCustom.cpp */,
 				07846384145B1B8E00A58DF1 /* JSTrackCustom.h */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
+				A32E83232B7248DF0055FE75 /* JSTrustedTypePolicyCustom.cpp */,
 				F4E1965A21F2395000285078 /* JSUndoItemCustom.cpp */,
 				715DA5D3201BB902002EF2B0 /* JSWebAnimationCustom.cpp */,
 				D3F3D3591A69A3B00059FC2B /* JSWebGL2RenderingContextCustom.cpp */,

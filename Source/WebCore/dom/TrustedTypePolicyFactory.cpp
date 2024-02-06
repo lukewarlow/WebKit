@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TrustedTypePolicyFactory.h"
 
+#include "ContextDestructionObserver.h"
 #include "JSDOMConvertObject.h"
 #include "JSTrustedHTML.h"
 #include "JSTrustedScript.h"
@@ -40,10 +41,14 @@ namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(TrustedTypePolicyFactory);
 
-Ref<TrustedTypePolicyFactory> TrustedTypePolicyFactory::create()
+Ref<TrustedTypePolicyFactory> TrustedTypePolicyFactory::create(ScriptExecutionContext& context)
 {
-    return adoptRef(*new TrustedTypePolicyFactory());
+    return adoptRef(*new TrustedTypePolicyFactory(context));
 }
+
+TrustedTypePolicyFactory::TrustedTypePolicyFactory(ScriptExecutionContext& context)
+ : ContextDestructionObserver(&context)
+{ }
 
 ExceptionOr<Ref<TrustedTypePolicy>> TrustedTypePolicyFactory::createPolicy(ScriptExecutionContext&, const String& policyName, const TrustedTypePolicyOptions& options)
 {

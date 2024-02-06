@@ -29,7 +29,6 @@
 #include "TrustedHTML.h"
 #include "TrustedScript.h"
 #include "TrustedScriptURL.h"
-#include "TrustedTypePolicyOptions.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -43,15 +42,13 @@ Ref<TrustedTypePolicy> TrustedTypePolicy::create(const String& name, const Trust
 
 TrustedTypePolicy::TrustedTypePolicy(const String& name, const TrustedTypePolicyOptions& options)
     : m_name(name)
-    , m_createHTMLCallback(options.createHTML)
-    , m_createScriptCallback(options.createScript)
-    , m_createScriptURLCallback(options.createScriptURL)
+    , m_options(options)
 { }
 
 ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_createHTMLCallback) {
-        auto callbackResult = m_createHTMLCallback->handleEvent(input, WTFMove(arguments));
+    if (m_options.createHTML) {
+        auto callbackResult = m_options.createHTML->handleEvent(input, WTFMove(arguments));
 
         if (callbackResult.type() == CallbackResultType::Success) {
             auto contents = callbackResult.releaseReturnValue();
@@ -71,8 +68,8 @@ ExceptionOr<Ref<TrustedHTML>> TrustedTypePolicy::createHTML(const String& input,
 
 ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_createScriptCallback) {
-        auto callbackResult = m_createScriptCallback->handleEvent(input, WTFMove(arguments));
+    if (m_options.createScript) {
+        auto callbackResult = m_options.createScript->handleEvent(input, WTFMove(arguments));
 
         if (callbackResult.type() == CallbackResultType::Success) {
             auto contents = callbackResult.releaseReturnValue();
@@ -92,8 +89,8 @@ ExceptionOr<Ref<TrustedScript>> TrustedTypePolicy::createScript(const String& in
 
 ExceptionOr<Ref<TrustedScriptURL>> TrustedTypePolicy::createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
-    if (m_createScriptURLCallback) {
-        auto callbackResult = m_createScriptURLCallback->handleEvent(input, WTFMove(arguments));
+    if (m_options.createScriptURL) {
+        auto callbackResult = m_options.createScriptURL->handleEvent(input, WTFMove(arguments));
 
         if (callbackResult.type() == CallbackResultType::Success) {
             auto contents = callbackResult.releaseReturnValue();
