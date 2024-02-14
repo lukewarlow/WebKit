@@ -22,12 +22,16 @@
 #include "config.h"
 #include "JSDOMConvertStrings.h"
 
-#include "JSDOMExceptionHandling.h"
+#include "JSDOMGlobalObject.h"
+#include "JSTrustedHTML.h"
+#include "JSTrustedScript.h"
+#include "JSTrustedScriptURL.h"
+#include "ScriptExecutionContext.h"
+#include "TrustedTypeUtils.h"
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSCJSValueInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
-
 
 namespace WebCore {
 using namespace JSC;
@@ -116,6 +120,41 @@ AtomString valueToUSVAtomString(JSGlobalObject& lexicalGlobalObject, JSValue val
     RETURN_IF_EXCEPTION(scope, { });
 
     return replaceUnpairedSurrogatesWithReplacementCharacter(WTFMove(string));
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#get-trusted-type-compliant-string-algorithm
+String getTrustedTypeCompliantString(const String& expectedType, JSGlobalObject& lexicalGlobalObject, JSValue value, const String& sink, ShouldConvertNullToEmptyString shouldConvertNullToEmptyString)
+{
+    VM& vm = lexicalGlobalObject.vm();
+
+    if (expectedType == "TrustedHTML"_s) {
+        if (auto* trustedHTML = JSTrustedHTML::toWrapped(vm, value))
+            return trustedHTML->toString();
+    } else if (expectedType == "TrustedScript"_s) {
+        if (auto* trustedScript = JSTrustedScript::toWrapped(vm, value))
+            return trustedScript->toString();
+    } else if (expectedType == "TrustedScriptURL"_s) {
+        if (auto* trustedScriptURL = JSTrustedScriptURL::toWrapped(vm, value))
+            return trustedScriptURL->toString();
+    } else {
+        ASSERT_NOT_REACHED();
+        return nullString();
+    }
+    auto scriptExecutionContext = jsDynamicCast<JSDOMGlobalObject*>(&lexicalGlobalObject)->scriptExecutionContext();
+
+    auto stringValue = expectedType == "TrustedScriptURL"_s
+        ? Converter<IDLUSVString>::convert(lexicalGlobalObject, value)
+        : Converter<IDLDOMString>::convert(lexicalGlobalObject, value);
+
+    if (value.isNull() && shouldConvertNullToEmptyString == ShouldConvertNullToEmptyString::Yes)
+        stringValue = emptyString();
+
+    stringValue = getTrustedTypeCompliantString(expectedType, *scriptExecutionContext, stringValue, sink);
+
+    if (stringValue.isNull() && shouldConvertNullToEmptyString == ShouldConvertNullToEmptyString::Yes)
+        return emptyString();
+
+    return stringValue;
 }
 
 } // namespace WebCore
