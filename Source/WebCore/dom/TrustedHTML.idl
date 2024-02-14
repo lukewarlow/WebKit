@@ -30,4 +30,5 @@
 interface TrustedHTML {
     stringifier;
     DOMString toJSON();
+    [CallWith=CurrentScriptExecutionContext] static TrustedHTML fromLiteral(object templateStringsArray);
 };

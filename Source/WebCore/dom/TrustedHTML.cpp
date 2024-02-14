@@ -26,6 +26,12 @@
 #include "config.h"
 #include "TrustedHTML.h"
 
+#include "ScriptExecutionContext.h"
+#include <JavaScriptCore/IteratorOperations.h>
+#include <JavaScriptCore/JSArray.h>
+#include <JavaScriptCore/JSGlobalObjectInlines.h>
+#include <JavaScriptCore/ObjectConstructor.h>
+#include <JavaScriptCore/Forward.h>
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -40,6 +46,22 @@ Ref<TrustedHTML> TrustedHTML::create(const String& data)
 TrustedHTML::TrustedHTML(const String& data)
     : m_data(data)
 {
+}
+
+ExceptionOr<Ref<TrustedHTML>> TrustedHTML::fromLiteral(ScriptExecutionContext& scriptExecutionContext, JSC::Strong<JSC::JSObject> templateStringsArray)
+{
+    auto* arr = JSC::asArray(templateStringsArray.get());
+    if (!arr->isTemplateObject())
+        return Exception { ExceptionCode::TypeError, "Can't fromLiteral a non-literal."_s };
+
+    if (templateStringsArray->getArrayLength() != 1)
+        return Exception { ExceptionCode::TypeError, "Can't fromLiteral a non-literal."_s };
+
+    auto* firstValue = JSC::asString(templateStringsArray->get(scriptExecutionContext.globalObject(), 0u));
+
+    // TrustedHTML is special and has other handling but this is just to demonstrate the concept
+
+    return create(firstValue->value(scriptExecutionContext.globalObject()));
 }
 
 } // namespace WebCore

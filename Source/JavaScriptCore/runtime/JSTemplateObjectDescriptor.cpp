@@ -62,6 +62,7 @@ JSArray* JSTemplateObjectDescriptor::createTemplateObject(JSGlobalObject* global
     unsigned count = descriptor().cookedStrings().size();
     JSArray* templateObject = constructEmptyArray(globalObject, nullptr, count);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    templateObject->setIsTemplateObject();
     JSArray* rawObject = constructEmptyArray(globalObject, nullptr, count);
     RETURN_IF_EXCEPTION(scope, nullptr);
 

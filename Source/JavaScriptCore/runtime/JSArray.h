@@ -150,6 +150,11 @@ public:
     JS_EXPORT_PRIVATE bool isIteratorProtocolFastAndNonObservable();
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue, IndexingType);
+
+    bool isTemplateObject() const { return m_isTemplateObject; }
+    void setIsTemplateObject() {
+        m_isTemplateObject = true;
+    }
         
 protected:
 #if ASSERT_ENABLED
@@ -185,6 +190,7 @@ private:
 
     bool setLengthWithArrayStorage(JSGlobalObject*, unsigned newLength, bool throwException, ArrayStorage*);
     void setLengthWritable(JSGlobalObject*, bool writable);
+    bool m_isTemplateObject = false;
 };
 
 inline Butterfly* tryCreateArrayButterfly(VM& vm, JSObject* intendedOwner, unsigned initialLength)

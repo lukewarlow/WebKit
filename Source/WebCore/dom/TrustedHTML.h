@@ -39,6 +39,7 @@ public:
 
     String toString() const { return m_data; }
     String toJSON() const { return toString(); }
+    static ExceptionOr<Ref<TrustedHTML>> fromLiteral(ScriptExecutionContext&, JSC::Strong<JSC::JSObject>);
 
 private:
     TrustedHTML(const String& data);
