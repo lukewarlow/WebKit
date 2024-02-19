@@ -171,6 +171,13 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         m_forceAsync = true;
 
     auto sourceText = scriptContent();
+    if (RefPtr htmlScriptElement = dynamicDowncast<HTMLScriptElement>(element())) {
+        auto scriptText = htmlScriptElement->prepareScriptText();
+        if (scriptText.isNull())
+            return false;
+        sourceText = scriptText;
+    }
+
     if (!hasSourceAttribute() && sourceText.isEmpty())
         return false;
 

@@ -49,6 +49,9 @@ public:
     WEBCORE_EXPORT ExceptionOr<void> setInnerTextForBinding(std::variant<String, RefPtr<TrustedScript>>) override;
     WEBCORE_EXPORT ExceptionOr<void> setTextContentForBinding(std::optional<std::variant<String, RefPtr<TrustedScript>>>) override;
 
+    String prepareScriptText();
+    void finishParsingChildren() override;
+
     void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
@@ -91,6 +94,7 @@ private:
 
     // https://w3c.github.io/trusted-types/dist/spec/#dom-htmlscriptelement-scripttext-slot
     String m_scriptText;
+    bool m_childrenChangedByApi;
 };
 
 } //namespace

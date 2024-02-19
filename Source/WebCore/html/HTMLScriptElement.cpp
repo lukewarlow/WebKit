@@ -36,6 +36,7 @@
 #include "TrustedTypeUtils.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
+#include <JavaScriptCore/CatchScope.h>
 
 namespace WebCore {
 
@@ -46,6 +47,8 @@ using namespace HTMLNames;
 inline HTMLScriptElement::HTMLScriptElement(const QualifiedName& tagName, Document& document, bool wasInsertedByParser, bool alreadyStarted)
     : HTMLElement(tagName, document)
     , ScriptElement(*this, wasInsertedByParser, alreadyStarted)
+    , m_scriptText(emptyString())
+    , m_childrenChangedByApi(false)
 {
     ASSERT(hasTagName(scriptTag));
 }
@@ -64,6 +67,8 @@ void HTMLScriptElement::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);
     ScriptElement::childrenChanged(change);
+
+    m_childrenChangedByApi = (change.source == ChildChange::Source::API);
 }
 
 void HTMLScriptElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -152,6 +157,31 @@ ExceptionOr<void> HTMLScriptElement::setTextContentForBinding(std::optional<std:
 
     setTextContent(WTFMove(stringValue));
     return { };
+}
+
+String HTMLScriptElement::prepareScriptText()
+{
+    if (m_scriptText == scriptContent())
+        return { WTFMove(m_scriptText) };
+
+    auto catchScope = DECLARE_CATCH_SCOPE(scriptExecutionContext()->vm());
+    auto stringValue = getTrustedTypeCompliantString("TrustedScript"_s, *scriptExecutionContext(), scriptContent(), "HTMLScriptElement text"_s);
+
+    // TODO: need to add a log to the console for the error case, should probably extract
+    // to the TrustedTypesUtils file instead of here.
+    CLEAR_AND_RETURN_IF_EXCEPTION(catchScope, nullString());
+
+    m_scriptText = stringValue;
+
+    return { WTFMove(m_scriptText) };
+}
+
+void HTMLScriptElement::finishParsingChildren()
+{
+    Element::finishParsingChildren();
+
+    if (!m_childrenChangedByApi && m_scriptText.isEmpty())
+        m_scriptText = scriptContent();
 }
 
 URL HTMLScriptElement::src() const
