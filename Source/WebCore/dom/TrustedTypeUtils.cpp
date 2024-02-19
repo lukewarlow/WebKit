@@ -75,9 +75,10 @@ std::variant<std::nullptr_t, Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedSc
     if (!protector)
         return nullptr;
 
-    auto jsExpectedType = JSC::jsString(vm, expectedType);
+    JSC::JSLockHolder locker(vm);
+    auto jsExpectedType = JSC::jsStringWithCache(vm, expectedType);
     JSC::Strong<JSC::Unknown> strongExpectedType(vm, jsExpectedType);
-    auto jsSink = JSC::jsString(vm, sink);
+    auto jsSink = JSC::jsStringWithCache(vm, sink);
     JSC::Strong<JSC::Unknown> strongSink(vm, jsSink);
     FixedVector<JSC::Strong<JSC::Unknown>> arguments({ strongExpectedType, strongSink });
     auto policyValueHolder = protector->getPolicyValue(expectedType, input, WTFMove(arguments), false);
@@ -136,8 +137,10 @@ String getTrustedTypeCompliantString(const String& expectedType, ScriptExecution
         if (std::holds_alternative<std::nullptr_t>(convertedType)) {
             auto required = !contentSecurityPolicy->allowMissingTrustedTypesForSinkGroup(expectedType, sink, "script"_s, stringValue);
 
-            if (required)
+            if (required) {
+                JSC::JSLockHolder locker(vm);
                 throwTypeError(scriptExecutionContext.globalObject(), scope, makeString("This assignment requires a ", expectedType));
+            }
         }
     }
 

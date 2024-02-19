@@ -46,6 +46,9 @@ public:
     WEBCORE_EXPORT void setCrossOrigin(const AtomString&);
     WEBCORE_EXPORT String crossOrigin() const;
 
+    WEBCORE_EXPORT ExceptionOr<void> setInnerTextForBinding(std::variant<String, RefPtr<TrustedScript>>) override;
+    WEBCORE_EXPORT ExceptionOr<void> setTextContentForBinding(std::optional<std::variant<String, RefPtr<TrustedScript>>>) override;
+
     void setReferrerPolicyForBindings(const AtomString&);
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
@@ -85,6 +88,9 @@ private:
     bool isScriptPreventedByAttributes() const final;
 
     Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+
+    // https://w3c.github.io/trusted-types/dist/spec/#dom-htmlscriptelement-scripttext-slot
+    String m_scriptText;
 };
 
 } //namespace

@@ -27,6 +27,7 @@
 #include "HTMLNames.h"
 #include "InputMode.h"
 #include "StyledElement.h"
+#include "TrustedScript.h"
 
 #if ENABLE(AUTOCAPITALIZE)
 #include "Autocapitalize.h"
@@ -66,6 +67,8 @@ public:
 
     WEBCORE_EXPORT String title() const final;
 
+    WEBCORE_EXPORT std::variant<String, RefPtr<TrustedScript>> innerTextForBinding();
+    WEBCORE_EXPORT virtual ExceptionOr<void> setInnerTextForBinding(std::variant<String, RefPtr<TrustedScript>>);
     WEBCORE_EXPORT ExceptionOr<void> setInnerText(String&&);
     WEBCORE_EXPORT ExceptionOr<void> setOuterText(String&&);
 

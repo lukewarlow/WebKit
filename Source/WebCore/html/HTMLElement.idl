@@ -49,7 +49,7 @@
     [CEReactions=Needed] attribute boolean spellcheck;
     [Conditional=AUTOCAPITALIZE, CEReactions=Needed] attribute [AtomString] DOMString autocapitalize;
 
-    [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerText;
+    [CEReactions=Needed, ImplementedAs=innerTextForBinding] attribute ([LegacyNullToEmptyString] DOMString or TrustedScript) innerText;
 
     [EnabledBySetting=FormAssociatedCustomElementsEnabled] ElementInternals attachInternals();
 

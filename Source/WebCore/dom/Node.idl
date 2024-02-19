@@ -58,7 +58,7 @@
     [DOMJIT=Getter] readonly attribute Node? nextSibling;
 
     [CEReactions=Needed] attribute DOMString? nodeValue;
-    [CEReactions=Needed] attribute DOMString? textContent;
+    [CEReactions=Needed, ImplementedAs=textContentForBinding] attribute (DOMString or TrustedScript)? textContent;
     [CEReactions=Needed] undefined normalize();
 
     [CEReactions=Needed, ImplementedAs=cloneNodeForBindings, NewObject] Node cloneNode(optional boolean deep = false);

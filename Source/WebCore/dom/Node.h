@@ -31,6 +31,7 @@
 #include "StyleValidity.h"
 #include "TaskSource.h"
 #include "TreeScope.h"
+#include "TrustedScript.h"
 #include <compare>
 #include <wtf/CompactPointerTuple.h>
 #include <wtf/CompactUniquePtrTuple.h>
@@ -199,6 +200,8 @@ public:
     WEBCORE_EXPORT const AtomString& lookupPrefix(const AtomString& namespaceURI) const;
     WEBCORE_EXPORT const AtomString& lookupNamespaceURI(const AtomString& prefix) const;
 
+    WEBCORE_EXPORT std::optional<std::variant<String, RefPtr<TrustedScript>>> textContentForBinding();
+    WEBCORE_EXPORT virtual ExceptionOr<void> setTextContentForBinding(std::optional<std::variant<String, RefPtr<TrustedScript>>>);
     WEBCORE_EXPORT String textContent(bool convertBRsToNewlines = false) const;
     WEBCORE_EXPORT void setTextContent(String&&);
     

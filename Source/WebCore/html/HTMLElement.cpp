@@ -539,6 +539,26 @@ void HTMLElement::setDir(const AtomString& value)
     setAttributeWithoutSynchronization(dirAttr, value);
 }
 
+std::variant<String, RefPtr<TrustedScript>> HTMLElement::innerTextForBinding()
+{
+    return innerText();
+}
+
+ExceptionOr<void> HTMLElement::setInnerTextForBinding(std::variant<String, RefPtr<TrustedScript>> value)
+{
+    String stringValue = WTF::switchOn(
+        value,
+        [](const String& str) -> String {
+            return str;
+        },
+        [](RefPtr<TrustedScript> trustedScript) -> String {
+            return trustedScript->toString();
+        }
+    );
+
+    return setInnerText(WTFMove(stringValue));
+}
+
 ExceptionOr<void> HTMLElement::setInnerText(String&& text)
 {
     // FIXME: This doesn't take whitespace collapsing into account at all.

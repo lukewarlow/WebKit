@@ -1792,6 +1792,27 @@ void Node::setTextContent(String&& text)
     ASSERT_NOT_REACHED();
 }
 
+std::optional<std::variant<String, RefPtr<TrustedScript>>> Node::textContentForBinding()
+{
+    return textContent();
+}
+
+ExceptionOr<void> Node::setTextContentForBinding(std::optional<std::variant<String, RefPtr<TrustedScript>>> value)
+{
+    String stringValue = WTF::switchOn(
+        value.value_or(emptyString()),
+        [](const String& str) -> String {
+            return str;
+        },
+        [](RefPtr<TrustedScript> trustedScript) -> String {
+            return trustedScript->toString();
+        }
+    );
+
+    setTextContent(WTFMove(stringValue));
+    return { };
+}
+
 static SHA1::Digest hashPointer(const void* pointer)
 {
     SHA1 sha1;

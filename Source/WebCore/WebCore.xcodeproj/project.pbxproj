@@ -4096,6 +4096,7 @@
 		A396B1CA29232B4F00469612 /* LibWebRTCVPXVideoEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = A396B1C629232B4F00469612 /* LibWebRTCVPXVideoEncoder.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A39F8E232A1ECC2700967C09 /* ScrollbarGutter.h in Headers */ = {isa = PBXBuildFile; fileRef = A39F8E212A1ECBFC00967C09 /* ScrollbarGutter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3AF9D8620326861006CAD06 /* UserAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = A3AF9D8220325324006CAD06 /* UserAgent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A3D62F222B7E45AF00EF2D4D /* TrustedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DCABEB8FA0C9F00F1517A0 /* TrustedScript.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A3DCA4EA2A2930DA004E18C2 /* ScrollbarColor.h in Headers */ = {isa = PBXBuildFile; fileRef = A363392B2A280D8000C6EA55 /* ScrollbarColor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */ = {isa = PBXBuildFile; fileRef = A409C983116D0DDD007197BD /* AccessibilityProgressIndicator.h */; };
 		A4226E5C1163D695008B8397 /* JSHTMLProgressElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A4226E5B1163D695008B8397 /* JSHTMLProgressElement.h */; };
@@ -42616,6 +42617,7 @@
 				4644BDC52ADBA502000A2245 /* TreeScopeInlines.h in Headers */,
 				14947FFE12F80CD200A0F631 /* TreeScopeOrderedMap.h in Headers */,
 				854FE7390A2297BE0058D7AD /* TreeWalker.h in Headers */,
+				A3D62F222B7E45AF00EF2D4D /* TrustedScript.h in Headers */,
 				C375D7FE16639519006184AB /* TypeAhead.h in Headers */,
 				E46A2B1C17CA65B9000DBCD8 /* TypedElementDescendantIterator.h in Headers */,
 				CD814C312996C0D9005A780A /* TypedElementDescendantIteratorInlines.h in Headers */,

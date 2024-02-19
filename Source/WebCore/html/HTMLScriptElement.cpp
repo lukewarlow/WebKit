@@ -33,6 +33,7 @@
 #include "RequestPriority.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TrustedTypeUtils.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/Ref.h>
 
@@ -89,6 +90,7 @@ void HTMLScriptElement::didFinishInsertingNode()
 // https://html.spec.whatwg.org/multipage/scripting.html#dom-script-text
 void HTMLScriptElement::setText(String&& value)
 {
+    m_scriptText = value;
     setTextContent(WTFMove(value));
 }
 
@@ -111,6 +113,45 @@ void HTMLScriptElement::setCrossOrigin(const AtomString& value)
 String HTMLScriptElement::crossOrigin() const
 {
     return parseCORSSettingsAttribute(attributeWithoutSynchronization(crossoriginAttr));
+}
+
+ExceptionOr<void> HTMLScriptElement::setInnerTextForBinding(std::variant<String, RefPtr<TrustedScript>> value)
+{
+    auto throwScope = DECLARE_THROW_SCOPE(scriptExecutionContext()->vm());
+    String stringValue = WTF::switchOn(
+        value,
+        [this](const String& str) -> String {
+            return getTrustedTypeCompliantString("TrustedScript"_s, *scriptExecutionContext(), str, "HTMLElement innerText"_s);
+        },
+        [](RefPtr<TrustedScript> trustedScript) -> String {
+            return trustedScript->toString();
+        }
+    );
+    RETURN_IF_EXCEPTION(throwScope, Exception { ExceptionCode::ExistingExceptionError });
+
+    m_scriptText = stringValue;
+
+    return setInnerText(WTFMove(stringValue));
+}
+
+ExceptionOr<void> HTMLScriptElement::setTextContentForBinding(std::optional<std::variant<String, RefPtr<TrustedScript>>> value)
+{
+    auto throwScope = DECLARE_THROW_SCOPE(scriptExecutionContext()->vm());
+    String stringValue = WTF::switchOn(
+        value.value_or(emptyString()),
+        [this](const String& str) -> String {
+            return getTrustedTypeCompliantString("TrustedScript"_s, *scriptExecutionContext(), str, "Node textContent"_s);
+        },
+        [](RefPtr<TrustedScript> trustedScript) -> String {
+            return trustedScript->toString();
+        }
+    );
+    RETURN_IF_EXCEPTION(throwScope, Exception { ExceptionCode::ExistingExceptionError });
+
+    m_scriptText = stringValue;
+
+    setTextContent(WTFMove(stringValue));
+    return { };
 }
 
 URL HTMLScriptElement::src() const
