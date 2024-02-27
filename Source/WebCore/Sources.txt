@@ -1216,6 +1216,7 @@ dom/TrustedScript.cpp
 dom/TrustedScriptURL.cpp
 dom/TrustedTypePolicy.cpp
 dom/TrustedTypePolicyFactory.cpp
+dom/TrustedTypeUtils.cpp
 dom/UIEvent.cpp
 dom/UIEventWithKeyState.cpp
 dom/UserActionElementSet.cpp

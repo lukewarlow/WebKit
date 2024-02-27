@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2008, 2010 Apple Inc. All Rights Reserved.
- * Copyright (C) 2011 Google Inc. All Rights Reserved.
+ * Copyright (C) 2024 Igalia S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,23 +20,31 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    ActiveDOMObject,
-    Exposed=(Window,DedicatedWorker)
-] interface Worker : EventTarget {
-    [CallWith=CurrentScriptExecutionContext&RuntimeFlags] constructor(ScriptURLString scriptUrl, optional WorkerOptions options);
+#pragma once
 
-    undefined terminate();
+#include "ExceptionOr.h"
+#include "TrustedHTML.h"
+#include "TrustedScript.h"
+#include "TrustedScriptURL.h"
 
-    [CallWith=CurrentGlobalObject] undefined postMessage(any message, sequence<object> transfer);
-    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
-    attribute EventHandler onmessage;
-    attribute EventHandler onmessageerror;
+namespace WebCore {
+
+class Exception;
+class ScriptExecutionContext;
+
+enum class TrustedType : int8_t {
+    TrustedHTML,
+    TrustedScript,
+    TrustedScriptURL,
 };
 
-Worker includes AbstractWorker;
+String trustedTypeToString(const TrustedType);
 
-typedef [StringContext=TrustedScriptURL] USVString ScriptURLString;
+WEBCORE_EXPORT std::variant<std::nullptr_t, Exception, Ref<TrustedHTML>, Ref<TrustedScript>, Ref<TrustedScriptURL>> processValueWithDefaultPolicy(ScriptExecutionContext&, TrustedType, const String& input, const String& sink);
+
+WEBCORE_EXPORT ExceptionOr<String> getTrustedTypeCompliantString(TrustedType, ScriptExecutionContext&, const String& input, const String& sink);
+
+} // namespace WebCore

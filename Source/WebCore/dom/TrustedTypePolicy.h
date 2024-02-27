@@ -39,6 +39,7 @@ namespace WebCore {
 class TrustedHTML;
 class TrustedScript;
 class TrustedScriptURL;
+enum class TrustedType : int8_t;
 struct TrustedTypePolicyOptions;
 
 class TrustedTypePolicy : public ScriptWrappable, public RefCounted<TrustedTypePolicy> {
@@ -49,6 +50,7 @@ public:
     ExceptionOr<Ref<TrustedHTML>> createHTML(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScript>> createScript(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
     ExceptionOr<Ref<TrustedScriptURL>> createScriptURL(const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&);
+    ExceptionOr<String> getPolicyValue(const TrustedType trustedTypeName, const String& input, FixedVector<JSC::Strong<JSC::Unknown>>&&, bool throwIfMissing = true);
     const String name() const { return m_name; }
 
 private:

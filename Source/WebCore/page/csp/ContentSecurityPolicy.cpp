@@ -776,6 +776,42 @@ AllowTrustedTypePolicy ContentSecurityPolicy::allowTrustedTypesPolicy(const Stri
         : details;
 }
 
+// https://w3c.github.io/trusted-types/dist/spec/#does-sink-require-trusted-types
+bool ContentSecurityPolicy::requireTrustedTypesForSinkGroup(const String& sinkGroup) const
+{
+    bool required = false;
+    for (auto& policy : m_policies) {
+        if (policy->requiresTrustedTypesForScript() && sinkGroup == "script"_s) {
+            required = true;
+            break;
+        }
+    }
+    return required;
+}
+
+// https://w3c.github.io/trusted-types/dist/spec/#should-block-sink-type-mismatch
+bool ContentSecurityPolicy::allowMissingTrustedTypesForSinkGroup(const String& stringContext, const String& sink, const String& sinkGroup, const String& source) const
+{
+    return allOf(m_policies, [&](auto& policy) {
+        bool isAllowed = true;
+        if (policy->requiresTrustedTypesForScript() && sinkGroup == "script"_s) {
+            if (!policy->isReportOnly())
+                isAllowed = false;
+
+            String consoleMessage = makeString(policy->isReportOnly() ? "[Report Only] " : "",
+                "This requires a "_s, stringContext, " value else it violates the following Content Security Policy directive: \"require-trusted-types-for 'script'\""_s);
+
+            const ContentSecurityPolicyDirectiveList& list = *policy.get();
+
+            String sourceURL;
+            TextPosition sourcePosition(OrdinalNumber::beforeFirst(), OrdinalNumber());
+            String sample = makeString(sink, "|"_s, StringView(source).left(40));
+            reportViolation("require-trusted-types-for"_s, list, "trusted-types-sink"_s, consoleMessage, sourceURL, StringView(sample), sourcePosition, nullptr, URL(), nullptr, true);
+        }
+        return isAllowed;
+    });
+}
+
 static bool shouldReportProtocolOnly(const URL& url)
 {
     // FIXME: https://w3c.github.io/webappsec-csp/#strip-url-for-use-in-reports suggests this should
@@ -825,7 +861,7 @@ void ContentSecurityPolicy::reportViolation(const ContentSecurityPolicyDirective
     return reportViolation(violatedDirective.nameForReporting().convertToASCIILowercase(), violatedDirective.directiveList(), blockedURL, consoleMessage, sourceURL, sourceContent, sourcePosition, state, preRedirectURL, element);
 }
 
-void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURLString, const String& consoleMessage, const String& sourceURL, const StringView& sourceContent, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL, Element* element) const
+void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirective, const ContentSecurityPolicyDirectiveList& violatedDirectiveList, const String& blockedURLString, const String& consoleMessage, const String& sourceURL, const StringView& sourceContent, const TextPosition& sourcePosition, JSC::JSGlobalObject* state, const URL& preRedirectURL, Element* element, bool samplePreClipped) const
 {
     logToConsole(consoleMessage, sourceURL, sourcePosition.m_line, sourcePosition.m_column, state);
 
@@ -838,7 +874,7 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     bool usesReportTo = !violatedDirectiveList.reportToTokens().isEmpty();
 
     String blockedURI;
-    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s || blockedURLString == "trusted-types-policy"_s)
+    if (blockedURLString == "eval"_s || blockedURLString == "inline"_s || blockedURLString == "trusted-types-policy"_s || blockedURLString == "trusted-types-sink"_s)
         blockedURI = blockedURLString;
     else {
         // If there is a redirect then we use the pre-redirect URL: https://www.w3.org/TR/CSP3/#security-violation-reports.
@@ -848,7 +884,9 @@ void ContentSecurityPolicy::reportViolation(const String& effectiveViolatedDirec
     info.documentURI = m_documentURL ? m_documentURL.value().strippedForUseAsReferrer().string : blockedURI;
     info.lineNumber = sourcePosition.m_line.oneBasedInt();
     info.columnNumber = sourcePosition.m_column.oneBasedInt();
-    info.sample = violatedDirectiveList.shouldReportSample(effectiveViolatedDirective) ? sourceContent.left(40).toString() : emptyString();
+    info.sample = emptyString();
+    if (violatedDirectiveList.shouldReportSample(effectiveViolatedDirective))
+        info.sample = samplePreClipped ? sourceContent.toString() : sourceContent.left(40).toString();
 
     if (!m_client) {
         RefPtrAllowingPartiallyDestroyed<Document> document = dynamicDowncast<Document>(m_scriptExecutionContext.get());
