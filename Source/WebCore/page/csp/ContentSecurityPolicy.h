@@ -281,6 +281,7 @@ private:
     bool m_isReportingEnabled { true };
     bool m_upgradeInsecureRequests { false };
     bool m_hasAPIPolicy { false };
+    bool m_requiresTrustedTypesForScript { false };
     int m_httpStatusCode { 0 };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;

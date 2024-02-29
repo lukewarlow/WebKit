@@ -544,6 +544,7 @@ public:
 #endif
 
     bool m_evalEnabled { true };
+    bool m_requireTrustedTypes { true };
     bool m_webAssemblyEnabled { true };
     bool m_needsSiteSpecificQuirks { false };
     unsigned m_globalLexicalBindingEpoch { 1 };
@@ -996,6 +997,7 @@ public:
     static void reportViolationForUnsafeEval(const JSGlobalObject*, JSString*) { }
 
     bool evalEnabled() const { return m_evalEnabled; }
+    bool requireTrustedTypes() const { return m_requireTrustedTypes; }
     bool webAssemblyEnabled() const { return m_webAssemblyEnabled; }
     const String& evalDisabledErrorMessage() const { return m_evalDisabledErrorMessage; }
     const String& webAssemblyDisabledErrorMessage() const { return m_webAssemblyDisabledErrorMessage; }
@@ -1003,6 +1005,10 @@ public:
     {
         m_evalEnabled = enabled;
         m_evalDisabledErrorMessage = errorMessage;
+    }
+    void setRequireTrustedTypes(bool required)
+    {
+        m_requireTrustedTypes = required;
     }
     void setWebAssemblyEnabled(bool enabled, const String& errorMessage = String())
     {

@@ -293,11 +293,13 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
 
     bool enableStrictMixedContentMode = false;
     for (auto& policy : m_policies) {
-        const ContentSecurityPolicyDirective* violatedDirective = policy->violatedDirectiveForUnsafeEval();
-        if (violatedDirective && !violatedDirective->directiveList().isReportOnly()) {
+        const ContentSecurityPolicyDirective* evalViolatedDirective = policy->violatedDirectiveForUnsafeEval();
+        if (evalViolatedDirective && !evalViolatedDirective->directiveList().isReportOnly()) {
             m_lastPolicyEvalDisabledErrorMessage = policy->evalDisabledErrorMessage();
             m_lastPolicyWebAssemblyDisabledErrorMessage = policy->webAssemblyDisabledErrorMessage();
         }
+        if (policy->requiresTrustedTypesForScript() && !policy->isReportOnly())
+            m_requiresTrustedTypesForScript = true;
         if (policy->hasBlockAllMixedContentDirective() && !policy->isReportOnly())
             enableStrictMixedContentMode = true;
     }
@@ -310,6 +312,8 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
         m_scriptExecutionContext->enforceSandboxFlags(m_sandboxFlags, SecurityContext::SandboxFlagsSource::CSP);
     if (enableStrictMixedContentMode)
         m_scriptExecutionContext->setStrictMixedContentMode(true);
+    if (m_requiresTrustedTypesForScript)
+        m_scriptExecutionContext->requireTrustedTypes();
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)

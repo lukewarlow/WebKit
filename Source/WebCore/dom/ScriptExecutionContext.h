@@ -134,6 +134,7 @@ public:
 
     virtual void disableEval(const String& errorMessage) = 0;
     virtual void disableWebAssembly(const String& errorMessage) = 0;
+    virtual void requireTrustedTypes() = 0;
 
     virtual IDBClient::IDBConnectionProxy* idbConnectionProxy() = 0;
 
