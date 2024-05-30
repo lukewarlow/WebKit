@@ -633,6 +633,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::IsEnabled:
             propertyMap.set(AXPropertyName::IsEnabled, axObject.isEnabled());
             break;
+        case AXPropertyName::IsPressed:
+            propertyMap.set(AXPropertyName::IsPressed, axObject.isPressed());
+            break;
         case AXPropertyName::IsExpanded:
             propertyMap.set(AXPropertyName::IsExpanded, axObject.isExpanded());
             break;

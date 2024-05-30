@@ -208,6 +208,7 @@ private:
 
     bool isFieldset() const final { return boolAttributeValue(AXPropertyName::IsFieldset); }
     bool isChecked() const final { return boolAttributeValue(AXPropertyName::IsChecked); }
+    bool isPressed() const final { return boolAttributeValue(AXPropertyName::IsPressed); }
     bool isEnabled() const final { return boolAttributeValue(AXPropertyName::IsEnabled); }
     bool isSelected() const final { return boolAttributeValue(AXPropertyName::IsSelected); }
     bool isFocused() const final { return tree()->focusedNodeID() == objectID(); }
@@ -458,7 +459,6 @@ private:
     bool isLoaded() const final { return loadingProgress() >= 1; }
     bool isOnScreen() const final;
     bool isOffScreen() const final;
-    bool isPressed() const final;
     bool isNonLayerSVGObject() const { return boolAttributeValue(AXPropertyName::IsNonLayerSVGObject); }
     // FIXME: isVisible should be accurate for all objects, not just widgets, on COCOA.
     bool isVisible() const final { return boolAttributeValue(AXPropertyName::IsVisible); }

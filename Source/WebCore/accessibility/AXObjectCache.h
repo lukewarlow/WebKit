@@ -344,6 +344,7 @@ public:
     void onWidgetVisibilityChanged(RenderWidget&);
     void valueChanged(Element&);
     void checkedStateChanged(Node&);
+    void pressedStateChanged(Node&);
     void autofillTypeChanged(Node&);
     void handleRoleChanged(AccessibilityObject&);
 

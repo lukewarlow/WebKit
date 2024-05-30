@@ -28,6 +28,7 @@
 
 #include "FocusController.h"
 #include "FrameSelection.h"
+#include "HTMLButtonElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
@@ -124,6 +125,14 @@ ALWAYS_INLINE bool isChecked(const Element& element)
         return const_cast<HTMLOptionElement&>(*option).selected(AllowStyleInvalidation::No);
     return false;
 }
+
+ALWAYS_INLINE bool isPressed(const Element& element)
+{
+    if (auto* buttonElement = dynamicDowncast<HTMLButtonElement>(element))
+        return buttonElement->matchesPressedPseudoClass();
+    return false;
+}
+
 
 ALWAYS_INLINE bool isInRange(const Element& element)
 {

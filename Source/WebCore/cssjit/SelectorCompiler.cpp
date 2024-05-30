@@ -90,6 +90,7 @@ using PseudoClassesSet = HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::
     v(operationIsAutofilledStrongPassword) \
     v(operationIsAutofilledStrongPasswordViewable) \
     v(operationIsChecked) \
+    v(operationIsPressed) \
     v(operationMatchesDefaultPseudoClass) \
     v(operationMatchesDisabledPseudoClass) \
     v(operationMatchesEnabledPseudoClass) \
@@ -233,6 +234,7 @@ static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofi
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPassword, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsAutofilledStrongPasswordViewable, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsChecked, bool, (const Element&));
+static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationIsPressed, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDefaultPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesDisabledPseudoClass, bool, (const Element&));
 static JSC_DECLARE_NOEXCEPT_JIT_OPERATION_WITHOUT_WTF_INTERNAL(operationMatchesEnabledPseudoClass, bool, (const Element&));
@@ -785,6 +787,12 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsChecked, bool, (const Element& elem
     return isChecked(element);
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIsPressed, bool, (const Element& element))
+{
+    COUNT_SELECTOR_OPERATION(operationIsPressed);
+    return isPressed(element);
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesDefaultPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesDefaultPseudoClass);
@@ -1055,6 +1063,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::Checked:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsChecked));
+        return FunctionType::SimpleSelectorChecker;
+    case CSSSelector::PseudoClass::Pressed:
+        fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationIsPressed));
         return FunctionType::SimpleSelectorChecker;
     case CSSSelector::PseudoClass::Default:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesDefaultPseudoClass));

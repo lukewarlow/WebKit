@@ -26,6 +26,8 @@
 #include "config.h"
 #include "HTMLButtonElement.h"
 
+#include "AXObjectCache.h"
+#include "CSSSelector.h"
 #include "CommonAtomStrings.h"
 #include "DOMFormData.h"
 #include "ElementInlines.h"
@@ -33,6 +35,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "KeyboardEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderButton.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
@@ -85,6 +88,12 @@ int HTMLButtonElement::defaultTabIndex() const
     return 0;
 }
 
+static const AtomString& toggleAtom()
+{
+    static MainThreadNeverDestroyed<const AtomString> identifier("toggle"_s);
+    return identifier;
+}
+
 const AtomString& HTMLButtonElement::formControlType() const
 {
     switch (m_type) {
@@ -94,6 +103,8 @@ const AtomString& HTMLButtonElement::formControlType() const
         return HTMLNames::buttonTag->localName();
     case RESET:
         return resetAtom();
+    case TOGGLE:
+        return toggleAtom();
     }
 
     ASSERT_NOT_REACHED();
@@ -119,6 +130,8 @@ void HTMLButtonElement::attributeChanged(const QualifiedName& name, const AtomSt
             m_type = RESET;
         else if (equalLettersIgnoringASCIICase(newValue, "button"_s))
             m_type = BUTTON;
+        else if (equalLettersIgnoringASCIICase(newValue, "toggle"_s))
+            m_type = TOGGLE;
         else
             m_type = SUBMIT;
         if (oldType != m_type) {
@@ -155,10 +168,15 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
-        } else if (invokeTargetElement()) {
-            handleInvokeAction();
-        } else
-            handlePopoverTargetAction();
+        } else {
+            if (isToggleButton())
+                setPressed(!pressed());
+
+            if (invokeTargetElement()) {
+                handleInvokeAction();
+            } else
+                handlePopoverTargetAction();
+        }
     }
 
     if (RefPtr keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
@@ -243,6 +261,30 @@ bool HTMLButtonElement::computeWillValidate() const
 bool HTMLButtonElement::isSubmitButton() const
 {
     return m_type == SUBMIT;
+}
+
+bool HTMLButtonElement::isToggleButton() const
+{
+    return m_type == TOGGLE;
+}
+
+void HTMLButtonElement::setPressed(bool isPressed)
+{
+    if (pressed() == isPressed)
+        return;
+
+    Style::PseudoClassChangeInvalidation pressedInvalidation(*this, CSSSelector::PseudoClass::Pressed, isPressed);
+
+    m_pressed = isPressed;
+
+    Ref document = this->document();
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->pressedStateChanged(*this);
+}
+
+bool HTMLButtonElement::matchesPressedPseudoClass() const
+{
+    return pressed() && isToggleButton();
 }
 
 bool HTMLButtonElement::isExplicitlySetSubmitButton() const

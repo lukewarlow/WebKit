@@ -1631,6 +1631,11 @@ void AXObjectCache::checkedStateChanged(Node& node)
     postNotification(&node, AXCheckedStateChanged);
 }
 
+void AXObjectCache::pressedStateChanged(Node& node)
+{
+    postNotification(&node, AXPressedStateChanged);
+}
+
 void AXObjectCache::autofillTypeChanged(Node& node)
 {
     postNotification(&node, AXNotification::AXAutofillTypeChanged);
@@ -2696,7 +2701,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
     else if (attrName == aria_disabledAttr)
         postNotification(element, AXDisabledStateChanged);
     else if (attrName == aria_pressedAttr)
-        postNotification(element, AXPressedStateChanged);
+        pressedStateChanged(*element);
     else if (attrName == aria_readonlyAttr)
         postNotification(element, AXReadOnlyStatusChanged);
     else if (attrName == aria_requiredAttr)
@@ -4389,6 +4394,9 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXCheckedStateChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::IsChecked });
             break;
+        case AXPressedStateChanged:
+            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::IsPressed });
+            break;
         case AXCurrentStateChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::CurrentState });
             break;
@@ -4519,7 +4527,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
         case AXPlaceholderChanged:
         case AXMenuListValueChanged:
         case AXMultiSelectableStateChanged:
-        case AXPressedStateChanged:
         case AXSelectedChildrenChanged:
         case AXTextChanged:
         case AXTextSecurityChanged:

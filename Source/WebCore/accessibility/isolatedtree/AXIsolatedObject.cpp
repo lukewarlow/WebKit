@@ -98,6 +98,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsControl, object.isControl());
     setProperty(AXPropertyName::IsEnabled, object.isEnabled());
     setProperty(AXPropertyName::IsExpanded, object.isExpanded());
+    setProperty(AXPropertyName::IsPressed, object.isPressed());
     setProperty(AXPropertyName::IsFileUploadButton, object.isFileUploadButton());
     setProperty(AXPropertyName::IsIndeterminate, object.isIndeterminate());
     setProperty(AXPropertyName::IsInlineText, object.isInlineText());
@@ -380,7 +381,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     setProperty(AXPropertyName::ActionVerb, object.actionVerb().isolatedCopy());
     setProperty(AXPropertyName::IsFieldset, object.isFieldset());
-    setProperty(AXPropertyName::IsPressed, object.isPressed());
     setProperty(AXPropertyName::IsSelectedOptionActive, object.isSelectedOptionActive());
     setProperty(AXPropertyName::LocalizedActionVerb, object.localizedActionVerb().isolatedCopy());
 #endif
@@ -1627,14 +1627,6 @@ bool AXIsolatedObject::isOffScreen() const
 {
     ASSERT_NOT_REACHED();
     return false;
-}
-
-bool AXIsolatedObject::isPressed() const
-{
-#if PLATFORM(MAC)
-    ASSERT_NOT_REACHED();
-#endif
-    return boolAttributeValue(AXPropertyName::IsPressed);
 }
 
 bool AXIsolatedObject::isSelectedOptionActive() const

@@ -197,6 +197,7 @@
         "popover-open": {
             "settings-flag": "popoverAttributeEnabled"
         },
+        "pressed": {},
         "read-only": {},
         "read-write": {},
         "required": {},

@@ -55,6 +55,7 @@
 #include "FrameSelection.h"
 #include "GeometryUtilities.h"
 #include "HTMLBodyElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLDataListElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFormControlElement.h"
@@ -3358,6 +3359,11 @@ String AccessibilityObject::extendedDescription() const
 
 bool AccessibilityObject::supportsPressed() const
 {
+    if (is<HTMLButtonElement>(node())) {
+        RefPtr button = dynamicDowncast<HTMLButtonElement>(node());
+        return button && button->isToggleButton();
+    }
+
     const AtomString& expanded = getAttribute(aria_pressedAttr);
     return equalLettersIgnoringASCIICase(expanded, "true"_s) || equalLettersIgnoringASCIICase(expanded, "false"_s);
 }
@@ -3466,6 +3472,13 @@ AccessibilityButtonState AccessibilityObject::checkboxOrRadioValue() const
     // If it's a toggle button, the aria-pressed attribute is consulted.
 
     if (isToggleButton()) {
+        RefPtr button = dynamicDowncast<HTMLButtonElement>(node());
+        if (button->isToggleButton()) {
+            if (button->pressed())
+                return AccessibilityButtonState::On;
+            return AccessibilityButtonState::Off;
+        }
+
         const AtomString& ariaPressed = getAttribute(aria_pressedAttr);
         if (equalLettersIgnoringASCIICase(ariaPressed, "true"_s))
             return AccessibilityButtonState::On;
@@ -3864,6 +3877,12 @@ bool AccessibilityObject::ignoredFromPresentationalRole() const
 
 bool AccessibilityObject::pressedIsPresent() const
 {
+    if (is<HTMLButtonElement>(node())) {
+        RefPtr button = dynamicDowncast<HTMLButtonElement>(node());
+        if (button && button->isToggleButton())
+            return true;
+    }
+
     return !getAttribute(aria_pressedAttr).isEmpty();
 }
 
@@ -3882,6 +3901,10 @@ TextIteratorBehaviors AccessibilityObject::textIteratorBehaviorForTextRange() co
     
 AccessibilityRole AccessibilityObject::buttonRoleType() const
 {
+    if (RefPtr button = dynamicDowncast<HTMLButtonElement>(node()))
+        if (button->isToggleButton())
+            return AccessibilityRole::ToggleButton;
+
     // If aria-pressed is present, then it should be exposed as a toggle button.
     // https://www.w3.org/TR/wai-aria#aria-pressed
     if (pressedIsPresent())

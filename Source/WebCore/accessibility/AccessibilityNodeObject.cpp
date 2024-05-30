@@ -48,6 +48,7 @@
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "HTMLAudioElement.h"
+#include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLDetailsElement.h"
 #include "HTMLFieldSetElement.h"
@@ -811,8 +812,12 @@ bool AccessibilityNodeObject::isPressed() const
         return false;
 
     // If this is an toggle button, check the aria-pressed attribute rather than node()->active()
-    if (isToggleButton())
+    if (isToggleButton()) {
+        RefPtr button = dynamicDowncast<HTMLButtonElement>(*node);
+        if (button->matchesPressedPseudoClass())
+            return true;
         return equalLettersIgnoringASCIICase(getAttribute(aria_pressedAttr), "true"_s);
+    }
 
     RefPtr element = dynamicDowncast<Element>(*node);
     return element && element->active();

@@ -42,6 +42,8 @@
     undefined setCustomValidity(DOMString error);
 
     readonly attribute NodeList labels;
+
+    attribute boolean pressed;
 };
 
 HTMLButtonElement includes PopoverInvokerElement;

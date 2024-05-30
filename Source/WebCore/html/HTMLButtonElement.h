@@ -45,10 +45,16 @@ public:
 
     bool isExplicitlySetSubmitButton() const;
 
+    bool pressed() const { return m_pressed; }
+    void setPressed(bool pressed);
+    bool isToggleButton() const;
+
+    bool matchesPressedPseudoClass() const;
+
 private:
     HTMLButtonElement(const QualifiedName& tagName, Document&, HTMLFormElement*);
 
-    enum Type { SUBMIT, RESET, BUTTON };
+    enum Type { SUBMIT, RESET, BUTTON, TOGGLE };
 
     const AtomString& formControlType() const final;
 
@@ -82,6 +88,7 @@ private:
 
     Type m_type;
     bool m_isActivatedSubmit;
+    bool m_pressed;
 };
 
 } // namespace

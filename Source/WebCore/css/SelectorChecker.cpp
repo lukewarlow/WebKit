@@ -1059,6 +1059,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return isInvalid(element);
         case CSSSelector::PseudoClass::Checked:
             return isChecked(element);
+        case CSSSelector::PseudoClass::Pressed:
+            return isPressed(element);
         case CSSSelector::PseudoClass::Indeterminate:
             return matchesIndeterminatePseudoClass(element);
         case CSSSelector::PseudoClass::Root:
