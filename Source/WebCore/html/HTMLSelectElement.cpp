@@ -54,6 +54,7 @@
 #include "NodeRareData.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
+#include "PseudoClassChangeInvalidation.h"
 #include "RenderListBox.h"
 #include "RenderMenuList.h"
 #include "RenderTheme.h"
@@ -1255,6 +1256,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
+                Style::PseudoClassChangeInvalidation styleInvalidation(*this, { {CSSSelector::PseudoClass::Open, true}, {CSSSelector::PseudoClass::Closed, false} });
                 renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
                 handled = true;
             }
@@ -1273,6 +1275,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
                 // gets called from RenderMenuList::valueChanged, which gets called
                 // after the user makes a selection from the menu.
                 saveLastSelection();
+                Style::PseudoClassChangeInvalidation styleInvalidation(*this, { {CSSSelector::PseudoClass::Open, true}, {CSSSelector::PseudoClass::Closed, false} });
                 renderer->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
                 handled = true;
             } else if (keyCode == '\r') {
@@ -1300,6 +1303,7 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
             // which gets called after the user makes a selection from
             // the menu.
             saveLastSelection();
+            Style::PseudoClassChangeInvalidation styleInvalidation(*this, { {CSSSelector::PseudoClass::Open, true}, {CSSSelector::PseudoClass::Closed, false} });
             menuList->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
         }
 #endif
@@ -1309,8 +1313,10 @@ void HTMLSelectElement::menuListDefaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
     if (event.type() == eventNames.blurEvent && !focused()) {
         CheckedRef menuList = downcast<RenderMenuList>(*renderer());
-        if (menuList->popupIsVisible())
+        if (menuList->popupIsVisible()) {
+            Style::PseudoClassChangeInvalidation styleInvalidation(*this, { {CSSSelector::PseudoClass::Open, false}, {CSSSelector::PseudoClass::Closed, true} });
             menuList->hidePopup();
+        }
     }
 #endif
 }
@@ -1697,11 +1703,36 @@ ExceptionOr<void> HTMLSelectElement::showPicker()
         return Exception { ExceptionCode::NotAllowedError, "Select showPicker() requires a user gesture."_s };
 
 #if !PLATFORM(IOS_FAMILY)
-    if (WeakPtr renderMenuList = dynamicDowncast<RenderMenuList>(renderer()))
+    if (WeakPtr renderMenuList = dynamicDowncast<RenderMenuList>(renderer())) {
+        Style::PseudoClassChangeInvalidation styleInvalidation(*this, { {CSSSelector::PseudoClass::Open, true}, {CSSSelector::PseudoClass::Closed, false} });
         renderMenuList->showPopup(); // showPopup() may run JS and cause the renderer to get destroyed.
+    }
 #endif
 
     return { };
+}
+
+bool HTMLSelectElement::isOpen() const
+{
+    // FIXME: Implement this for iOS.
+#if !PLATFORM(IOS_FAMILY)
+    if (WeakPtr menuList = dynamicDowncast<RenderMenuList>(renderer()))
+        return menuList->popupIsVisible();
+#endif
+    return false;
+}
+
+bool HTMLSelectElement::isClosed() const
+{
+    // FIXME: Implement this for iOS.
+#if !PLATFORM(IOS_FAMILY)
+    if (WeakPtr menuList = dynamicDowncast<RenderMenuList>(renderer())) {
+        WTFLogAlways("HTMLSelectElement::isClosed() %d", !menuList->popupIsVisible());
+        return !menuList->popupIsVisible();
+    }
+    return usesMenuList();
+#endif
+    return false;
 }
 
 } // namespace

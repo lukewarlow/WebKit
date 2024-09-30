@@ -28,12 +28,14 @@
 
 #include "FocusController.h"
 #include "FrameSelection.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLFrameElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
+#include "HTMLSelectElement.h"
 #include "InspectorInstrumentation.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -568,6 +570,33 @@ ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 ALWAYS_INLINE bool matchesPopoverOpenPseudoClass(const Element& element)
 {
     return element.isPopoverShowing();
+}
+
+ALWAYS_INLINE bool matchesOpenPseudoClass(const Element& element)
+{
+    WTFLogAlways("matchesOpenPseudoClass");
+    if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element))
+        return dialog->isOpen();
+    if (auto* details = dynamicDowncast<HTMLDetailsElement>(element))
+        return details->isOpen();
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(element))
+        return select->isOpen();
+
+    WTFLogAlways("matchesOpenPseudoClass SHOULD NOT BE HERE");
+    return false;
+}
+
+ALWAYS_INLINE bool matchesClosedPseudoClass(const Element& element)
+{
+    WTFLogAlways("matchesClosedPseudoClass");
+    if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element))
+        return !dialog->isOpen();
+    if (auto* details = dynamicDowncast<HTMLDetailsElement>(element))
+        return !details->isOpen();
+    if (auto* select = dynamicDowncast<HTMLSelectElement>(element))
+        return select->isClosed();
+    WTFLogAlways("matchesClosedPseudoClass SHOULD NOT BE HERE");
+    return false;
 }
 
 ALWAYS_INLINE bool matchesUserInvalidPseudoClass(const Element& element)

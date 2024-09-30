@@ -93,6 +93,7 @@
             "conditional": "ENABLE(VIDEO)"
         },
         "checked": {},
+        "closed": {},
         "corner-present": {
             "comment": "For scrollbar styling.",
             "status": "non-standard"
@@ -186,6 +187,7 @@
         },
         "only-child": {},
         "only-of-type": {},
+        "open": {},
         "optional": {},
         "out-of-range": {},
         "past": {

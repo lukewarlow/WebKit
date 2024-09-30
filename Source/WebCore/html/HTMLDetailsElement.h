@@ -50,6 +50,8 @@ public:
 
     void queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState);
 
+    bool isOpen() const { return hasAttribute(HTMLNames::openAttr); }
+
     std::optional<DetailsToggleEventData> queuedToggleEventData() const { return m_queuedToggleEventData; }
     void setQueuedToggleEventData(DetailsToggleEventData data) { m_queuedToggleEventData = data; }
     void clearQueuedToggleEventData() { m_queuedToggleEventData = std::nullopt; }

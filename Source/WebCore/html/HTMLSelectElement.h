@@ -87,6 +87,9 @@ public:
 
     ExceptionOr<void> showPicker();
 
+    bool isOpen() const;
+    bool isClosed() const;
+
     WEBCORE_EXPORT HTMLOptionElement* namedItem(const AtomString& name);
     WEBCORE_EXPORT HTMLOptionElement* item(unsigned index);
     bool isSupportedPropertyIndex(unsigned index);
