@@ -857,6 +857,7 @@ protected:
 
     void disconnectFromIntersectionObservers();
     static AtomString makeTargetBlankIfHasDanglingMarkup(const AtomString& target);
+    void synchronizeAttribute(const QualifiedName&) const;
 
 private:
     LocalFrame* documentFrameWithNonNullView() const;
@@ -881,7 +882,6 @@ private:
     void didModifyAttribute(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue);
     void didRemoveAttribute(const QualifiedName&, const AtomString& oldValue);
 
-    void synchronizeAttribute(const QualifiedName&) const;
     void synchronizeAttribute(const AtomString& localName) const;
 
     inline const Attribute* getAttributeInternal(const QualifiedName&) const;

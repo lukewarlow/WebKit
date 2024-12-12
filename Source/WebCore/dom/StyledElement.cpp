@@ -48,6 +48,8 @@
 #include "StylePropertyMap.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "MutationRecord.h"
+#include "MutationObserverInterestGroup.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -199,6 +201,12 @@ void StyledElement::invalidateStyleAttribute()
             Style::AttributeChangeInvalidation styleInvalidation(*this, styleAttr, attributeWithoutSynchronization(styleAttr), newValue);
             setSynchronizedLazyAttribute(styleAttr, newValue);
         }
+    }
+
+    if (auto recipients = MutationObserverInterestGroup::createForAttributesMutation(*this, styleAttr)) {
+        AtomString oldValue = attributeWithoutSynchronization(styleAttr);
+        recipients->enqueueMutationRecord(MutationRecord::createAttributes(*this, styleAttr, oldValue));
+        synchronizeAttribute(styleAttr);
     }
 }
 
