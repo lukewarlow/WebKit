@@ -98,7 +98,8 @@ public:
 
     void disableEval(const String& errorMessage);
     void disableWebAssembly(const String& errorMessage);
-    void setRequiresTrustedTypes(bool required);
+    void setRequiresTrustedTypes(bool, bool);
+    void setTrustedEvalEnabled(bool);
 
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);

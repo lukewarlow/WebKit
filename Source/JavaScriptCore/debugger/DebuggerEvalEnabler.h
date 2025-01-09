@@ -47,10 +47,11 @@ public:
         if (globalObject) {
             m_evalWasDisabled = !globalObject->evalEnabled();
             m_trustedTypesWereRequired = globalObject->requiresTrustedTypes();
+            m_trustedTypesWereRequiredAndEnforced = globalObject->requiresTrustedTypesEnforced();
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(true, globalObject->evalDisabledErrorMessage());
             if (m_trustedTypesWereRequired)
-                globalObject->setRequiresTrustedTypes(false);
+                globalObject->setRequiresTrustedTypes(false, false);
 #if ASSERT_ENABLED
             if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
                 globalObject->setGlobalObjectAtDebuggerEntry(globalObject);
@@ -65,7 +66,7 @@ public:
             if (m_evalWasDisabled)
                 globalObject->setEvalEnabled(false, globalObject->evalDisabledErrorMessage());
             if (m_trustedTypesWereRequired)
-                globalObject->setRequiresTrustedTypes(true);
+                globalObject->setRequiresTrustedTypes(m_trustedTypesWereRequired, m_trustedTypesWereRequiredAndEnforced);
 #if ASSERT_ENABLED
             if (m_mode == Mode::EvalOnGlobalObjectAtDebuggerEntry)
                 globalObject->setGlobalObjectAtDebuggerEntry(nullptr);
@@ -77,6 +78,7 @@ private:
     JSGlobalObject* const m_globalObject;
     bool m_evalWasDisabled { false };
     bool m_trustedTypesWereRequired { false };
+    bool m_trustedTypesWereRequiredAndEnforced { false };
 #if ASSERT_ENABLED
     DebuggerEvalEnabler::Mode m_mode;
 #endif

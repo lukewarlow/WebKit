@@ -157,7 +157,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     }
 
     TopCallFrameSetter topCallFrame(vm, callFrame);
-    if (!globalObject->evalEnabled()) {
+    if (!globalObject->evalEnabled() && !(Options::useTrustedTypes() && globalObject->trustedEvalEnabled() && globalObject->requiresTrustedTypesEnforced())) {
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programSource);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return { };

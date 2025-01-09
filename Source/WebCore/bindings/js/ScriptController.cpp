@@ -465,12 +465,20 @@ void ScriptController::setWebAssemblyEnabled(bool value, const String& errorMess
     jsWindowProxy->window()->setWebAssemblyEnabled(value, errorMessage);
 }
 
-void ScriptController::setRequiresTrustedTypes(bool required)
+void ScriptController::setRequiresTrustedTypes(bool required, bool enforced)
 {
     auto* proxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
     if (!proxy)
         return;
-    proxy->window()->setRequiresTrustedTypes(required);
+    proxy->window()->setRequiresTrustedTypes(required, enforced);
+}
+
+void ScriptController::setTrustedEvalEnabled(bool enabled)
+{
+    auto* proxy = windowProxy().existingJSWindowProxy(mainThreadNormalWorld());
+    if (!proxy)
+        return;
+    proxy->window()->setTrustedEvalEnabled(enabled);
 }
 
 bool ScriptController::canAccessFromCurrentOrigin(LocalFrame* frame, Document& accessingDocument)

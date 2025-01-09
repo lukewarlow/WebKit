@@ -190,8 +190,9 @@ void ContentSecurityPolicy::didCreateWindowProxy(JSWindowProxy& windowProxy) con
         return;
     }
     window->setEvalEnabled(m_lastPolicyEvalDisabledErrorMessage.isNull(), m_lastPolicyEvalDisabledErrorMessage);
+    window->setTrustedEvalEnabled(m_trustedEvalEnabled);
     window->setWebAssemblyEnabled(m_lastPolicyWebAssemblyDisabledErrorMessage.isNull(), m_lastPolicyWebAssemblyDisabledErrorMessage);
-    window->setRequiresTrustedTypes(requireTrustedTypesForSinkGroup("script"_s));
+    window->setRequiresTrustedTypes(requireTrustedTypesForSinkGroup("script"_s), requireTrustedTypesForSinkGroup("script"_s, IncludeReportOnlyPolicies::No));
 }
 
 ContentSecurityPolicyResponseHeaders ContentSecurityPolicy::responseHeaders() const
@@ -298,6 +299,7 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
 
     bool enableStrictMixedContentMode = false;
     bool requiresTrustedTypesForScript = false;
+    bool requiresTrustedTypesForScriptEnforced = false;
     for (auto& policy : m_policies) {
         const ContentSecurityPolicyDirective* violatedDirective = policy->violatedDirectiveForUnsafeEval();
         if (violatedDirective && !violatedDirective->directiveList().isReportOnly()) {
@@ -307,9 +309,13 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
         if (policy->hasBlockAllMixedContentDirective() && !policy->isReportOnly())
             enableStrictMixedContentMode = true;
 
-        // Intentionally doesn't check for report only, this boolean is used for performance purposes, rather than CSP enforcement.
-        if (policy->requiresTrustedTypesForScript())
+        if (policy->requiresTrustedTypesForScript()) {
             requiresTrustedTypesForScript = true;
+            requiresTrustedTypesForScriptEnforced = !policy->isReportOnly();
+        }
+
+        if (!policy->trustedEvalEnabled())
+            m_trustedEvalEnabled = false;
     }
 
     if (!m_lastPolicyEvalDisabledErrorMessage.isNull())
@@ -320,7 +326,8 @@ void ContentSecurityPolicy::applyPolicyToScriptExecutionContext()
         m_scriptExecutionContext->enforceSandboxFlags(m_sandboxFlags, SecurityContext::SandboxFlagsSource::CSP);
     if (enableStrictMixedContentMode)
         m_scriptExecutionContext->setStrictMixedContentMode(true);
-    m_scriptExecutionContext->setRequiresTrustedTypes(requiresTrustedTypesForScript);
+    m_scriptExecutionContext->setRequiresTrustedTypes(requiresTrustedTypesForScript, requiresTrustedTypesForScriptEnforced);
+    m_scriptExecutionContext->setTrustedEvalEnabled(m_trustedEvalEnabled);
 }
 
 void ContentSecurityPolicy::setOverrideAllowInlineStyle(bool value)
@@ -541,9 +548,11 @@ bool ContentSecurityPolicy::allowEval(JSC::JSGlobalObject* state, LogToConsole s
 {
     if (m_policies.isEmpty() || overrideContentSecurityPolicy)
         return true;
+    if (m_trustedEvalEnabled && requireTrustedTypesForSinkGroup("script"_s, IncludeReportOnlyPolicies::No))
+        return true;
     bool didNotifyInspector = false;
     auto handleViolatedDirective = [&] (const ContentSecurityPolicyDirective& violatedDirective) {
-        String consoleMessage = shouldLogToConsole == LogToConsole::Yes ? consoleMessageForViolation(violatedDirective, URL(), "Refused to execute a script"_s, "'unsafe-eval'"_s) : String();
+        String consoleMessage = shouldLogToConsole == LogToConsole::Yes ? consoleMessageForViolation(violatedDirective, URL(), "Refused to execute a script"_s, "'unsafe-eval' and 'trusted-types-eval'"_s) : String();
         reportViolation(violatedDirective, "eval"_s, consoleMessage, state, codeContent);
         if (!didNotifyInspector && !violatedDirective.directiveList().isReportOnly()) {
             reportBlockedScriptExecutionToInspector(violatedDirective.text());
@@ -787,16 +796,17 @@ AllowTrustedTypePolicy ContentSecurityPolicy::allowTrustedTypesPolicy(const Stri
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#does-sink-require-trusted-types
-bool ContentSecurityPolicy::requireTrustedTypesForSinkGroup(const String& sinkGroup) const
+bool ContentSecurityPolicy::requireTrustedTypesForSinkGroup(const String& sinkGroup, IncludeReportOnlyPolicies includeReportOnlyPolicies) const
 {
-    bool required = false;
     for (auto& policy : m_policies) {
         if (policy->requiresTrustedTypesForScript() && sinkGroup == "script"_s) {
-            required = true;
-            break;
+            if (!policy->isReportOnly())
+                return true;
+            if (includeReportOnlyPolicies == IncludeReportOnlyPolicies::Yes)
+                return true;
         }
     }
-    return required;
+    return false;
 }
 
 // https://w3c.github.io/trusted-types/dist/spec/#should-block-sink-type-mismatch

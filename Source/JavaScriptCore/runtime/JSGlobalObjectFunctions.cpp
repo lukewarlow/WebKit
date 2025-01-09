@@ -498,7 +498,7 @@ JSC_DEFINE_HOST_FUNCTION(globalFuncEval, (JSGlobalObject* globalObject, CallFram
         }
     }
 
-    if (!globalObject->evalEnabled()) {
+    if (!globalObject->evalEnabled() && !(Options::useTrustedTypes() && globalObject->trustedEvalEnabled() && globalObject->requiresTrustedTypesEnforced())) {
         globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, programSource);
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return JSValue::encode(jsUndefined());

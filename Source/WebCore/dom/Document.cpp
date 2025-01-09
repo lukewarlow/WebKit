@@ -4433,13 +4433,22 @@ void Document::disableWebAssembly(const String& errorMessage)
     frame->checkedScript()->setWebAssemblyEnabled(false, errorMessage);
 }
 
-void Document::setRequiresTrustedTypes(bool required)
+void Document::setRequiresTrustedTypes(bool required, bool enforced)
 {
     RefPtr frame = this->frame();
     if (!frame)
         return;
 
-    frame->checkedScript()->setRequiresTrustedTypes(required);
+    frame->checkedScript()->setRequiresTrustedTypes(required, enforced);
+}
+
+void Document::setTrustedEvalEnabled(bool enabled)
+{
+    RefPtr frame = this->frame();
+    if (!frame)
+        return;
+
+    frame->checkedScript()->setTrustedEvalEnabled(enabled);
 }
 
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()

@@ -862,7 +862,8 @@ public:
 
     void disableEval(const String& errorMessage) final;
     void disableWebAssembly(const String& errorMessage) final;
-    void setRequiresTrustedTypes(bool required) final;
+    void setRequiresTrustedTypes(bool required, bool enforced) final;
+    void setTrustedEvalEnabled(bool required) final;
 
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     StorageConnection* storageConnection();
