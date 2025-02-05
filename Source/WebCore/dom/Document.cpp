@@ -4485,6 +4485,7 @@ void Document::setRequiresTrustedTypes(bool required)
         return;
 
     frame->checkedScript()->setRequiresTrustedTypes(required);
+    m_requiresTrustedTypes = required;
 }
 
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()

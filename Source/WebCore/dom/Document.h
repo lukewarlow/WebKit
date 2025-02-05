@@ -865,6 +865,8 @@ public:
     void disableWebAssembly(const String& errorMessage) final;
     void setRequiresTrustedTypes(bool required) final;
 
+    bool requiresTrustedTypes() const { return m_requiresTrustedTypes; }
+
     IDBClient::IDBConnectionProxy* idbConnectionProxy() final;
     StorageConnection* storageConnection();
     SocketProvider* socketProvider() final;
@@ -2705,6 +2707,8 @@ private:
     bool m_hasBeenRevealed { false };
     bool m_visualUpdatesAllowedChangeRequiresLayoutMilestones { false };
     bool m_visualUpdatesAllowedChangeCompletesPageTransition { false };
+
+    bool m_requiresTrustedTypes { false };
 
     static bool hasEverCreatedAnAXObjectCache;
 
