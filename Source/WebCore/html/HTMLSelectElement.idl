@@ -26,6 +26,7 @@
     [CEReactions=NotNeeded, ReflectSetter] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
     [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
+    [CEReactions=NotNeeded, Reflect="form"] attribute Element? formElement;
     [CEReactions=NotNeeded, Reflect] attribute boolean multiple;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute boolean required;

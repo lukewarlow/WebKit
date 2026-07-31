@@ -65,6 +65,7 @@
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FormAssociatedCustomElement.h"
+#include "FormListedElement.h"
 #include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FullscreenOptions.h"
@@ -2338,6 +2339,7 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
 bool Element::isElementReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
     return name == HTMLNames::aria_activedescendantAttr
+        || name == HTMLNames::formAttr
         || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
         || (settings.commandAttributesEnabled() && name == HTMLNames::commandforAttr);
 }
@@ -2599,7 +2601,13 @@ void Element::setElementAttribute(const QualifiedName& attributeName, Element* e
     setAttribute(attributeName, emptyAtom());
 
     explicitlySetAttrElementsMap().set(attributeName, Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> { element });
-    
+
+    if (attributeName == HTMLNames::formAttr) {
+        if (auto* listedElement = asFormListedElement())
+            listedElement->resetFormOwner();
+        return;
+    }
+
     if (CheckedPtr cache = protect(document())->existingAXObjectCache())
         cache->updateRelations(*this, attributeName);
 }

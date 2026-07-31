@@ -107,10 +107,13 @@ static RefPtr<HTMLFormElement> findAssociatedForm(const HTMLElement& element, HT
             if (!newFormCandidate)
                 return nullptr;
             if (&element.traverseToRootNode() == &element.treeScope().rootNode()) {
-                if (element.document().settings().shadowRootReferenceTargetEnabled())
-                    ASSERT(&element.traverseToRootNode() == &(element.treeScope().retargetToScope(*newFormCandidate))->treeScope().rootNode());
-                else
-                    ASSERT(&element.traverseToRootNode() == &newFormCandidate->traverseToRootNode());
+                if (element.document().settings().shadowRootReferenceTargetEnabled()) {
+                    ASSERT(&element.traverseToRootNode() == &(element.treeScope().retargetToScope(*newFormCandidate))->treeScope().rootNode()
+                        || element.isShadowIncludingDescendantOf(newFormCandidate->traverseToRootNode()));
+                } else {
+                    ASSERT(&element.traverseToRootNode() == &newFormCandidate->traverseToRootNode()
+                        || element.isShadowIncludingDescendantOf(newFormCandidate->traverseToRootNode()));
+                }
                 return newFormCandidate;
             }
         }

@@ -61,6 +61,7 @@
 #include "ScriptDisallowedScope.h"
 #include "Settings.h"
 #include "SubmitEvent.h"
+#include "TreeScope.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserGestureIndicator.h"
 #include <limits>
@@ -493,6 +494,27 @@ void HTMLFormElement::attributeChanged(const QualifiedName& name, const AtomStri
     }
 }
 
+static Ref<Element> elementForFormControlOrdering(const TreeScope& treeScope, Element& element)
+{
+    if (RefPtr retargetedElement = dynamicDowncast<Element>(treeScope.retargetToScope(element)))
+        return retargetedElement.releaseNonNull();
+    return element;
+}
+
+static unsigned short comparePositionForFormControlOrdering(const TreeScope& treeScope, Element& left, Element& right)
+{
+    if (&left.treeScope() == &right.treeScope())
+        return left.compareDocumentPosition(right);
+
+    Ref leftForOrdering = elementForFormControlOrdering(treeScope, left);
+    Ref rightForOrdering = elementForFormControlOrdering(treeScope, right);
+    if (leftForOrdering.ptr() == rightForOrdering.ptr()) {
+        unsigned short position = left.compareDocumentPosition(right);
+        return position & Node::DOCUMENT_POSITION_DISCONNECTED ? 0 : position;
+    }
+    return leftForOrdering->compareDocumentPosition(rightForOrdering);
+}
+
 unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, unsigned rangeStart, unsigned rangeEnd)
 {
     if (m_listedElements.isEmpty())
@@ -511,15 +533,15 @@ unsigned HTMLFormElement::formElementIndexWithFormAttribute(Element* element, un
     while (left != right) {
         unsigned middle = std::midpoint(left, right);
         ASSERT(middle < m_listedElementsBeforeIndex || middle >= m_listedElementsAfterIndex);
-        position = element->compareDocumentPosition(protect(*m_listedElements[middle]));
+        position = comparePositionForFormControlOrdering(treeScope(), *element, protect(*m_listedElements[middle]));
         if (position & DOCUMENT_POSITION_FOLLOWING)
             right = middle;
         else
             left = middle + 1;
     }
-    
+
     ASSERT(left < m_listedElementsBeforeIndex || left >= m_listedElementsAfterIndex);
-    position = element->compareDocumentPosition(protect(*m_listedElements[left]));
+    position = comparePositionForFormControlOrdering(treeScope(), *element, protect(*m_listedElements[left]));
     if (position & DOCUMENT_POSITION_FOLLOWING)
         return left;
     return left + 1;
@@ -532,11 +554,7 @@ unsigned HTMLFormElement::formElementIndex(FormListedElement& listedElement)
     // Treats separately the case where this element has the form attribute
     // for performance consideration.
     if (listedHTMLElement->hasAttributeWithoutSynchronization(formAttr) && listedHTMLElement->isConnected()) {
-        unsigned short position;
-        if (document().settings().shadowRootReferenceTargetEnabled())
-            position = listedHTMLElement->treeScope().retargetToScope(*this)->compareDocumentPosition(listedHTMLElement);
-        else
-            position = compareDocumentPosition(listedHTMLElement);
+        unsigned short position = comparePositionForFormControlOrdering(treeScope(), *this, listedHTMLElement);
         ASSERT(!(position & DOCUMENT_POSITION_DISCONNECTED));
         if (position & DOCUMENT_POSITION_PRECEDING) {
             ++m_listedElementsBeforeIndex;
