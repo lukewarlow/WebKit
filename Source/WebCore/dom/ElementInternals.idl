@@ -34,6 +34,7 @@
     [Custom] undefined setFormValue(any value, optional any state);
 
     readonly attribute HTMLFormElement? form;
+    [Reflect="form"] attribute Element? formElement;
 
     undefined setValidity(optional ValidityStateFlags flags = {}, optional DOMString message, optional HTMLElement validationAnchor);
     readonly attribute boolean willValidate;

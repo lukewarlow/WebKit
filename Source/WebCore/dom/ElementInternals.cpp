@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "ElementInlines.h"
 #include "ElementRareData.h"
+#include "FormListedElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLMaybeFormAssociatedCustomElement.h"
 #include "ScriptWrappableInlines.h"
@@ -143,6 +144,12 @@ void ElementInternals::setAttributeWithoutSynchronization(const QualifiedName& n
 
     protect(element->customElementDefaultARIA())->setValueForAttribute(name, value);
 
+    if (name == formAttr) {
+        if (auto* listedElement = element->asFormListedElement())
+            listedElement->resetFormOwner();
+        return;
+    }
+
     if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(*element, name, oldValue, computeValueForAttribute(*element, name));
 }
@@ -167,6 +174,12 @@ void ElementInternals::setElementAttribute(const QualifiedName& name, Element* v
     auto oldValue = computeValueForAttribute(*element, name);
 
     protect(element->customElementDefaultARIA())->setElementForAttribute(name, value);
+
+    if (name == formAttr) {
+        if (auto* listedElement = element->asFormListedElement())
+            listedElement->resetFormOwner();
+        return;
+    }
 
     if (CheckedPtr cache = protect(element->document())->existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(*element, name, oldValue, computeValueForAttribute(*element, name));

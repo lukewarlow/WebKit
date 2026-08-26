@@ -98,12 +98,20 @@ void FormListedElement::elementRemovedFromAncestor(Element& element, Node::Remov
 static RefPtr<HTMLFormElement> findAssociatedForm(const HTMLElement& element, HTMLFormElement* currentAssociatedForm)
 {
     if (element.isConnected()) {
-        if (auto& formId = element.attributeWithoutSynchronization(formAttr); !formId.isNull()) {
+        RefPtr<HTMLFormElement> newFormCandidate;
+        bool hasFormAttribute = false;
+        if (CheckedPtr internalsAttributes = element.customElementDefaultARIAIfExists(); internalsAttributes && internalsAttributes->hasAttribute(formAttr)) {
+            hasFormAttribute = true;
+            newFormCandidate = dynamicDowncast<HTMLFormElement>(internalsAttributes->elementForAttribute(element, formAttr));
+        } else if (auto& formId = element.attributeWithoutSynchronization(formAttr); !formId.isNull()) {
             // The HTML5 spec says that the element should be associated with
             // the first element in the document to have an ID that equal to
             // the value of form attribute, so we put the result of
             // treeScope().getElementById() over the given element.
-            RefPtr newFormCandidate = dynamicDowncast<HTMLFormElement>(element.elementForAttributeInternal(formAttr));
+            hasFormAttribute = true;
+            newFormCandidate = dynamicDowncast<HTMLFormElement>(element.elementForAttributeInternal(formAttr));
+        }
+        if (hasFormAttribute) {
             if (!newFormCandidate)
                 return nullptr;
             if (&element.traverseToRootNode() == &element.treeScope().rootNode()) {
